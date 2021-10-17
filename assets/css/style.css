@@ -272,6 +272,10 @@ img.blur {
 
 /*----People Page beginning----*/
 
+.card-leader {
+  max-width: 37rem;
+}
+
 .card-distance {
   padding-top: 25px;
   padding-bottom: 25px;
