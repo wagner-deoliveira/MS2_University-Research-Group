@@ -273,7 +273,11 @@ img.blur {
 /*----People Page beginning----*/
 
 .card-leader {
-  max-width: 37rem;
+  max-width: 25rem;
+}
+
+.card-staff {
+  max-width: 25rem;
 }
 
 .card-distance {
@@ -283,19 +287,16 @@ img.blur {
 
 .card-distance-3 {
   padding-top: 25px;
-  padding-bottom: 100px;
+  padding-bottom: 50px;
   font-size: 24px;
 }
 
 .h3-cards-people {
   text-align: center;
+  padding-top: 25px;
   padding-bottom: 15px;
   color: #1a1a1ae6;
   font-weight: 900;
-}
-
-.hr-people {
-  padding-top: 5px;
 }
 
 .p-people-cards {
