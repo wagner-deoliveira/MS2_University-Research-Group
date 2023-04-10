@@ -608,7 +608,6 @@ The developer consulted multiple sites in order to better understand the code th
 
 ### Changes
 - First, you need a GitHub account
-- After, you need to be added as a contributor to the project
 - Then, download the project locally https://github.com/wagner-deoliveira/MS2_University-Research-Group.git
 - Create a new branch and start to develop
 - Finally, create a PR with a brief explanation of the changes made
