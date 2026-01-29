@@ -24,7 +24,7 @@ const stats = [
     </section>
 
     <!-- Publication Covers -->
-    <section class="py-12 bg-gray-50">
+    <section class="py-12 bg-muted">
       <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
           <a href="https://doi.org/10.1039/D0SM01082K" target="_blank" class="block rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
@@ -45,12 +45,12 @@ const stats = [
       <div class="max-w-4xl mx-auto space-y-12">
         {publicationYears.map(group => (
           <div>
-            <h2 class="text-3xl font-bold mb-6 text-slate-800 border-b-2 border-slate-100 pb-2">{group.year}</h2>
+            <h2 class="text-3xl font-bold mb-6 text-foreground border-b-2 border-border pb-2">{group.year}</h2>
             <ul class="space-y-4">
               {group.items.map(item => (
-                <li class="p-4 bg-white rounded-lg shadow-sm border flex items-start justify-between gap-4">
-                  <p class="text-gray-700 leading-relaxed text-sm">{item.text}</p>
-                  <a href={item.link} target="_blank" class="shrink-0 text-blue-600 font-medium hover:underline text-xs bg-blue-50 px-3 py-1 rounded">
+                <li class="p-4 bg-card rounded-lg shadow-sm border flex items-start justify-between gap-4">
+                  <p class="text-muted-foreground leading-relaxed text-sm">{item.text}</p>
+                  <a href={item.link} target="_blank" class="shrink-0 text-blue-600 dark:text-blue-400 font-medium hover:underline text-xs bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded">
                     link ✶
                   </a>
                 </li>

@@ -1,36 +1,43 @@
-<footer class="bg-gray-100 py-12 border-t">
+<footer class="bg-muted py-12 border-t">
   <div class="container mx-auto px-4">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
       <div>
         <a href="https://www.ugr.es/en" target="_blank">
-          <img src="/assets/images/index/granada_logo2.jpg" alt="University Logo" class="h-16 w-auto" />
+          <img src="/assets/images/index/granada_logo2.jpg" alt="University Logo" class="h-16 w-auto dark:invert dark:brightness-200" />
         </a>
       </div>
       <div>
-        <h3 class="font-bold text-lg mb-4">Location</h3>
-        <p class="text-sm text-gray-600">
+        <h3 class="font-bold text-lg mb-4 text-foreground">Location</h3>
+        <p class="text-sm text-muted-foreground">
           <a href="https://www.google.ie/maps/place/Facoltà+Di+Scienze/@37.1797533,-3.6114926,17z/data=!4m12!1m6!3m5!1s0xd71fcec9131a577:0x2d03f6ab4085cc8e!2sFacoltà+Di+Scienze!8m2!3d37.1797533!4d-3.6092986!3m4!1s0xd71fcec9131a577:0x2d03f6ab4085cc8e!8m2!3d37.1797533!4d-3.6092986?hl=it" target="_blank" class="hover:underline">
             Faculty of Sciences, Avenida de Fuente Nueva, s/n, C.P. 18071 Granada, Spain
           </a>
         </p>
       </div>
       <div>
-        <h3 class="font-bold text-lg mb-4">Contacts</h3>
-        <p class="text-sm text-gray-600">
+        <h3 class="font-bold text-lg mb-4 text-foreground">Contacts</h3>
+        <p class="text-sm text-muted-foreground">
           <a href="mailto:f2n2lab@go.ugr.es" class="hover:underline">f2n2lab@go.ugr.es</a><br />
           <a href="tel:+34958245148" class="hover:underline">+34 958 24 51 48</a>
         </p>
       </div>
       <div>
-        <h3 class="font-bold text-lg mb-4">Social</h3>
+        <h3 class="font-bold text-lg mb-4 text-foreground">Social</h3>
         <div class="flex space-x-4 mb-4">
-          <!-- Simplified icons -->
-          <a href="https://www.facebook.com/" target="_blank" class="text-gray-600 hover:text-blue-600">FB</a>
-          <a href="https://twitter.com/F2N2Lab" target="_blank" class="text-gray-600 hover:text-blue-400">TW</a>
-          <a href="https://www.linkedin.com/in/magnetic-soft-matter-group-ugr-5775b4216/" target="_blank" class="text-gray-600 hover:text-blue-700">IN</a>
-          <a href="https://www.instagram.com/" target="_blank" class="text-gray-600 hover:text-pink-600">IG</a>
+          <a href="https://www.facebook.com/" target="_blank" class="text-muted-foreground hover:text-blue-600 transition-colors" aria-label="Facebook">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-facebook"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="https://twitter.com/F2N2Lab" target="_blank" class="text-muted-foreground hover:text-foreground transition-colors" aria-label="X">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M16.99 2H20.29L13.09 10.23L21.6 21.5H14.96L9.77 14.7L3.81 21.5H0.51L8.21 12.7L0 1.83H6.81L11.49 8.01L16.99 2ZM15.83 19.52H17.66L5.86 3.73H3.9L15.83 19.52Z" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/in/magnetic-soft-matter-group-ugr-5775b4216/" target="_blank" class="text-muted-foreground hover:text-blue-700 transition-colors" aria-label="LinkedIn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-linkedin"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="https://www.instagram.com/" target="_blank" class="text-muted-foreground hover:text-pink-600 transition-colors" aria-label="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-instagram"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+          </a>
         </div>
-        <p class="text-xs text-gray-500">Powered by Francesco Nardecchia & Wagner Rosa © 2021</p>
+        <p class="text-xs text-muted-foreground/60">Powered by Francesco Nardecchia & Wagner Rosa © 2021</p>
       </div>
     </div>
   </div>

@@ -68,15 +68,15 @@ const pastGrants = [
       <div class="max-w-4xl mx-auto space-y-20">
         <!-- Current Grants -->
         <div>
-          <h2 class="text-3xl font-bold mb-8 text-slate-900 border-l-4 border-blue-600 pl-4">Current Grants</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground border-l-4 border-blue-600 pl-4">Current Grants</h2>
           <div class="space-y-6">
             {currentGrants.map(grant => (
-              <div class="p-6 bg-white rounded-xl shadow border hover:shadow-md transition-shadow">
+              <div class="p-6 bg-card rounded-xl shadow border hover:shadow-md transition-shadow">
                 <h3 class="text-xl font-bold mb-2">{grant.title}</h3>
-                <p class="text-gray-600 mb-2 italic text-sm">{grant.funder}</p>
-                <p class="text-gray-700">{grant.details}</p>
+                <p class="text-muted-foreground mb-2 italic text-sm">{grant.funder}</p>
+                <p class="text-muted-foreground">{grant.details}</p>
                 {grant.link && (
-                  <a href={grant.link} target="_blank" class="inline-block mt-3 text-blue-600 font-medium hover:underline text-sm">
+                  <a href={grant.link} target="_blank" class="inline-block mt-3 text-blue-600 dark:text-blue-400 font-medium hover:underline text-sm">
                     Learn more ✶
                   </a>
                 )}
@@ -87,15 +87,15 @@ const pastGrants = [
 
         <!-- Past Grants -->
         <div>
-          <h2 class="text-3xl font-bold mb-8 text-slate-900 border-l-4 border-gray-400 pl-4">Past Grants</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground border-l-4 border-gray-400 pl-4">Past Grants</h2>
           <div class="space-y-6">
             {pastGrants.map(grant => (
-              <div class="p-6 bg-gray-50 rounded-xl border opacity-90">
+              <div class="p-6 bg-muted rounded-xl border opacity-90">
                 <h3 class="text-xl font-bold mb-2">{grant.title}</h3>
-                <p class="text-gray-600 mb-2 italic text-sm">{grant.funder}</p>
-                <p class="text-gray-700">{grant.details}</p>
+                <p class="text-muted-foreground mb-2 italic text-sm">{grant.funder}</p>
+                <p class="text-muted-foreground">{grant.details}</p>
                 {grant.link && (
-                  <a href={grant.link} target="_blank" class="inline-block mt-3 text-blue-600 font-medium hover:underline text-sm">
+                  <a href={grant.link} target="_blank" class="inline-block mt-3 text-blue-600 dark:text-blue-400 font-medium hover:underline text-sm">
                     Learn more ✶
                   </a>
                 )}
