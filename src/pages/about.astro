@@ -1,0 +1,34 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+---
+
+<Layout title="About Us - Magnetic Soft Matter Group">
+	<Header />
+	<main>
+		<section class="relative h-[40vh] bg-black overflow-hidden">
+			<img src="/assets/images/about/about_jtron.jpg" alt="Background" class="absolute inset-0 w-full h-full object-cover opacity-50 blur-sm" />
+			<div class="relative z-10 container mx-auto px-4 h-full flex flex-col justify-center text-white">
+				<h1 class="text-5xl font-bold mb-4">About us</h1>
+				<p class="text-xl opacity-90">A motivated and professional team of scientists</p>
+			</div>
+		</section>
+
+		<section class="py-16 container mx-auto px-4">
+			<div class="max-w-4xl mx-auto space-y-12">
+				<div class="rounded-xl overflow-hidden shadow-2xl">
+					<img src="/assets/images/about/F2N2 (12).jpg" alt="Group" class="w-full h-auto" />
+				</div>
+
+				<div class="prose prose-slate lg:prose-xl max-w-none">
+					<h2 class="text-3xl font-bold text-slate-900 mb-6">Rheology research and applications</h2>
+					<p class="text-gray-700 leading-relaxed text-lg">
+						In the Singular Laboratory in Advanced Technologies F2N2Lab at the University of Granada, the group carries out cutting-edge research on magnetic nanomaterials through rheomicroscopy experiments, particle-level simulations (molecular dynamics), and finite element method simulations. Currently, we are developing several Nanomedicine applications, in particular cancer treatment and tissue regeneration methods, through the use of non-stationary triaxial magnetic fields using our specially designed equipment.
+					</p>
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>

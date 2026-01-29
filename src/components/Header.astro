@@ -1,0 +1,30 @@
+---
+const navItems = [
+  { name: 'Home', href: '/' },
+  { name: 'About', href: '/about' },
+  { name: 'People', href: '/people' },
+  { name: 'Projects', href: '/projects' },
+  { name: 'Publications', href: '/publications' },
+];
+---
+
+<header class="border-b bg-white">
+  <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+    <a href="/" class="flex items-center">
+      <img src="/assets/images/logo/LOGOMSMGroup_cropped.png" alt="logo" class="h-12 w-auto" />
+    </a>
+
+    <nav class="hidden md:flex space-x-6">
+      {navItems.map((item) => (
+        <a href={item.href} class="text-gray-600 hover:text-black transition-colors font-medium">
+          {item.name}
+        </a>
+      ))}
+    </nav>
+
+    <!-- Mobile Menu Button (simplified) -->
+    <button class="md:hidden p-2 text-gray-600">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+  </div>
+</header>

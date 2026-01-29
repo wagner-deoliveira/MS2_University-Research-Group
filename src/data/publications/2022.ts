@@ -1,0 +1,6 @@
+export const publications2022 = [
+  { text: "Olivares M.L., Costabel M.L., Zorrilla S.E., & de Vicente J. (2022). Calcium-induced skim milk gels: Effect of milk powder concentration and pH on tribo-rheological characteristics and gel physico-chemical properties. Food Hydrocolloids.", link: "https://doi.org/10.1016/j.foodhyd.2021.107335" },
+  { text: "Cuadrado C.F., Díaz/Barrios A., Campana K.O., Cardona Romani E., Quiroz F.J., Nardecchia S., Debut A., Vizuete K., Niebieskikwiat D., Ávila C.E., Salazar M.A., Garzón Romero C., Blasco Zúñiga A.A., Rivera M.R., & Romero M.P. (2022). Broad-spectrum antimicrobial ZnMintPc encapsulated in magnetic-nanocomposites with Graphene Oxide MWCNTs based on bimodal action of Photodynamic and Photothermal effect. Pharmaceutics.", link: "https://www.preprints.org/manuscript/202201.0037/v1" },
+  { text: "Sahoo R., Ussa-Aldana P., Lancon D., Rondelez F., Morillas J.R., Hidalgo-Alvarez R., & de Vicente J. (2022). Design of smart lubricants using the inverse ferrofluid approach. Tribology International.", link: "https://doi.org/10.1016/j.triboint.2021.107346" },
+  { text: "Terkel M., Tajuelo J., & de Vicente J. (2022). Enhancing magnetorheology with precession magnetic fields. Journal of Rheology.", link: "https://doi.org/10.1122/8.0000356" }
+];

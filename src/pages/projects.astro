@@ -1,0 +1,110 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+
+const currentGrants = [
+  {
+    title: "Desarrollo de Estructuras Multifuncionales mediante Electrohilado de Fluidos Magneto-reológicos",
+    funder: "(FEDER, A-FQM-396-UGR20). Fondo Europeo de Desarrollo Regional (FEDER) Junta de Andalucia (Spain).",
+    details: "End time: June 2023. 60,000.00 Euros. PI: J. de Vicente."
+  },
+  {
+    title: "Multi-Axial Magnetic Field RHEology (MAMFRHE)",
+    funder: "EF-ST-H2020-MSCA-IF-2020, EU, Grant 101030666). EU.",
+    details: "End time: September 2024. 245,732.16 Euros. PI: J.R. Morillas and J. de Vicente.",
+    link: "https://cordis.europa.eu/project/id/101030666"
+  },
+  {
+    title: "Autoensamblado y Propiedades Reológicas de Coloides Magnéticos en Campos no Estacionarios",
+    funder: "(PID2019-104883GB-I00). Ministerio de Ciencia e Innovación (Spain).",
+    details: "End time: May 2023. 139,150.00 Euros. PI: J. de Vicente."
+  },
+  {
+    title: "Magneto-reología en Campos Triaxiales no Estacionarios",
+    funder: "(P18-FR-2465). Consejería de Economía, Conocimiento, Empresas y Universidad (Junta de Andalucía, Spain)",
+    details: "End time: December 2022. 94,800 Euros. PI: J. de Vicente."
+  }
+];
+
+const pastGrants = [
+  {
+    title: "Flow-Induced Layer Formation in Dipolar Non-brownian Fluids",
+    funder: "(E200700433). EUSMI - European Soft Matter Infrastructure.",
+    details: "End time: December 2021. PI: G. Petekidis and J. de Vicente."
+  },
+  {
+    title: "Reomicroscopio Confocal de Alta Velocidad",
+    funder: "(EQC2019-005529-P). Adquisición de equipamiento científico-técnico del subprograma estatal de infraestructuras de investigación y equipamiento científico-técnico (Plan Estatal I+D+I 2017-2020) (Spain).",
+    details: "End time: December 2021. 522,404.55 Euros. PI: J. de Vicente."
+  },
+  {
+    title: "Structure and Dynamics in Active Glass-forming Liquids (ARIADNE)",
+    funder: "(EF-ST-H2020-MSCA-IF-2018, EU, Grant 840195). EU.",
+    details: "End time: May 2021. 160,932.48 Euros. PI: S. Roldán-Vargas and J. de Vicente.",
+    link: "https://cordis.europa.eu/project/id/840195"
+  },
+  {
+    title: "Triaxial Magnetic Fields for the Control of Bioactive Materials in Bone Engineering (Matrix-B)",
+    funder: "(EF-ST-H2020-MSCA-IF-2017, EU, Grant 795318). EU.",
+    details: "End time: August 2020. 170,121.6 Euros. PI: S. Nardecchia and J. de Vicente.",
+    link: "https://cordis.europa.eu/project/id/795318"
+  }
+];
+---
+
+<Layout title="Our Projects - Magnetic Soft Matter Group">
+  <Header />
+  <main>
+    <section class="relative h-[40vh] bg-black overflow-hidden">
+      <img src="/assets/images/index/jtron_index_intro.jpeg" alt="Background" class="absolute inset-0 w-full h-full object-cover opacity-50 blur-sm" />
+      <div class="relative z-10 container mx-auto px-4 h-full flex flex-col justify-center text-white">
+        <h1 class="text-5xl font-bold mb-4">Our Projects</h1>
+        <hr class="w-24 border-t-4 border-white opacity-50" />
+      </div>
+    </section>
+
+    <section class="py-16 container mx-auto px-4">
+      <div class="max-w-4xl mx-auto space-y-20">
+        <!-- Current Grants -->
+        <div>
+          <h2 class="text-3xl font-bold mb-8 text-slate-900 border-l-4 border-blue-600 pl-4">Current Grants</h2>
+          <div class="space-y-6">
+            {currentGrants.map(grant => (
+              <div class="p-6 bg-white rounded-xl shadow border hover:shadow-md transition-shadow">
+                <h3 class="text-xl font-bold mb-2">{grant.title}</h3>
+                <p class="text-gray-600 mb-2 italic text-sm">{grant.funder}</p>
+                <p class="text-gray-700">{grant.details}</p>
+                {grant.link && (
+                  <a href={grant.link} target="_blank" class="inline-block mt-3 text-blue-600 font-medium hover:underline text-sm">
+                    Learn more ✶
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Past Grants -->
+        <div>
+          <h2 class="text-3xl font-bold mb-8 text-slate-900 border-l-4 border-gray-400 pl-4">Past Grants</h2>
+          <div class="space-y-6">
+            {pastGrants.map(grant => (
+              <div class="p-6 bg-gray-50 rounded-xl border opacity-90">
+                <h3 class="text-xl font-bold mb-2">{grant.title}</h3>
+                <p class="text-gray-600 mb-2 italic text-sm">{grant.funder}</p>
+                <p class="text-gray-700">{grant.details}</p>
+                {grant.link && (
+                  <a href={grant.link} target="_blank" class="inline-block mt-3 text-blue-600 font-medium hover:underline text-sm">
+                    Learn more ✶
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>

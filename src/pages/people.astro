@@ -1,0 +1,162 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+
+const leader = {
+  name: "Prof. Juan de Vicente",
+  role: "Full Professor",
+  description: "Fluid Physics, Rheology, Tribology, Non-Newtonian Fluids, Magnetic Colloids, Nanoscience, Magnetorheology, Soft Matter",
+  email: "jvicente@ugr.es",
+  image: "/assets/images/people/cards/juan_leader.jpg"
+};
+
+const permanentStaff = [
+  {
+    name: "Fernando Vereda Moratilla",
+    role: "Associate Professor",
+    description: "Magnetic particles, Magnetorheology, Colloid and Interfaces",
+    email: "fvereda@ugr.es",
+    image: "/assets/images/people/cards/fernando.png"
+  },
+  {
+    name: "Stefania Nardecchia",
+    role: "Associate Professor",
+    description: "Magnetic fields for the control of bioactive materials in tissue engineering",
+    email: "stefania@ugr.es",
+    image: "/assets/images/people/cards/stefania.png"
+  }
+];
+
+const researchStaff = [
+  {
+    name: "Jose R. Morillas",
+    role: "Postdoctoral Research Associate",
+    description: "Numerical and experimental study of magnetorheological fluids and ferrofluids",
+    email: "jmorillas@ugr.es",
+    image: "/assets/images/people/cards/josem.png"
+  },
+  {
+    name: "José Antonio Ruiz López",
+    role: "Postdoctoral Research Fellow (Junta de Andalucía)",
+    description: "Rheology of highly-concentrated magnetic colloids under exotic kinematics",
+    email: "jantonio@ugr.es",
+    image: "/assets/images/people/cards/josea.png"
+  },
+  {
+    name: "Alejandro Rodríguez Barroso",
+    role: "Postdoctoral Research Associate",
+    description: "Generation and control of triaxial magnetic fields",
+    email: "arguezbarroso@ugr.es",
+    image: "/assets/images/people/cards/alejandro.png"
+  },
+  {
+    name: "Guillermo Camacho Villar",
+    role: "PhD Candidate",
+    description: "Self-assembly directed by non-stationary magnetic fields",
+    email: "guillermocam@correo.ugr.es",
+    image: "/assets/images/people/cards/guillhermo.png"
+  },
+  {
+    name: "Óscar Martínez Cano",
+    role: "PhD Candidate",
+    description: "Magnetorheology in the presence of triaxial magnetic fields",
+    email: "omcano@ugr.es",
+    image: "/assets/images/people/cards/oscar.png"
+  },
+  {
+    name: "Matthew Terkel",
+    role: "PhD Candidate",
+    description: "Particle dynamics and rheological response of magnetorheological fluids under unsteady magnetic fields",
+    email: "mterkel@ugr.es",
+    image: "/assets/images/people/cards/matthew.png"
+  }
+];
+
+const students = [
+  "Lucía España Herreros",
+  "Fidel Muriel Martín",
+  "Jesús García Gutiérrez",
+  "María del Caño Mármol",
+  "Elena Torres",
+  "Marcos Fuentes"
+];
+---
+
+<Layout title="Our Team - Magnetic Soft Matter Group">
+  <Header />
+  <main>
+    <section class="relative h-[40vh] bg-black overflow-hidden">
+      <img src="/assets/images/people/people_jtron.jpg" alt="Background" class="absolute inset-0 w-full h-full object-cover opacity-50 blur-sm" />
+      <div class="relative z-10 container mx-auto px-4 h-full flex flex-col justify-center text-white">
+        <h1 class="text-5xl font-bold mb-4">Our Team</h1>
+        <p class="text-xl opacity-90">One by one, all of the components of our driving force</p>
+      </div>
+    </section>
+
+    <section class="py-16 container mx-auto px-4">
+      <!-- Group Leader -->
+      <div class="mb-20">
+        <h2 class="text-3xl font-bold mb-8 text-center border-b pb-4">Group leader</h2>
+        <div class="max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden border">
+          <img src={leader.image} alt={leader.name} class="w-full h-80 object-contain bg-gray-50" />
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-1">{leader.name}</h3>
+            <p class="text-blue-600 font-medium mb-3">{leader.role}</p>
+            <p class="text-gray-600 text-sm mb-4">{leader.description}</p>
+            <p class="text-xs text-gray-400">{leader.email}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Permanent Staff -->
+      <div class="mb-20">
+        <h2 class="text-3xl font-bold mb-8 text-center border-b pb-4">Permanent Staff</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {permanentStaff.map(member => (
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border">
+              <img src={member.image} alt={member.name} class="w-full h-64 object-contain bg-gray-50" />
+              <div class="p-6">
+                <h3 class="text-xl font-bold mb-1">{member.name}</h3>
+                <p class="text-blue-600 font-medium mb-3">{member.role}</p>
+                <p class="text-gray-600 text-sm mb-4">{member.description}</p>
+                <p class="text-xs text-gray-400">{member.email}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Research Staff -->
+      <div class="mb-20">
+        <h2 class="text-3xl font-bold mb-8 text-center border-b pb-4">Research Staff</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {researchStaff.map(member => (
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border">
+              <img src={member.image} alt={member.name} class="w-full h-64 object-contain bg-gray-50" />
+              <div class="p-6">
+                <h3 class="text-xl font-bold mb-1">{member.name}</h3>
+                <p class="text-blue-600 font-medium mb-3">{member.role}</p>
+                <p class="text-gray-600 text-sm mb-4">{member.description}</p>
+                <p class="text-xs text-gray-400">{member.email}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Students -->
+      <div>
+        <h2 class="text-3xl font-bold mb-8 text-center border-b pb-4">Students</h2>
+        <div class="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+          {students.map(student => (
+            <div class="p-4 bg-gray-50 rounded-lg text-center font-medium text-gray-700 border">
+              {student}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
