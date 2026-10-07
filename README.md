@@ -1,3 +1,15 @@
+<h2 align="center">Preview de la web (no publicada)</h2>
+
+https://htmlpreview.github.io/?https://github.com/guillezuhe/MSMG_web/blob/edits/index.html
+
+<b>Este enlace sirve para previsualizar la página una vez que se han hecho cambios y se han guardado con 'Commit changes'.</b> Para publicarlos en el servidor, el administrador lo hará en cuanto reciba la notificación de cambios realizados.
+
+
+</br></br></br></br></br></br></br></br>
+
+
+
+
 <h1 align="center">Magnetic Soft Matter Group</h1>
 
 ![URG Mockup Images](assets/images/testing_images/mockup/mockup.png)
