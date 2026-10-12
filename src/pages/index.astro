@@ -1,0 +1,237 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import Eyebrow from '@/components/Eyebrow.astro';
+import ArrowButton from '@/components/ArrowButton.astro';
+import RheologyAnimation from '@/components/RheologyAnimation.astro';
+import { pressData } from '@/data/press';
+
+const img = (name: string, directory: 'index' | 'about' = 'index') => `/assets/images/${directory}/${encodeURIComponent(name)}`;
+const disciplines = ['Physics', 'Chemistry', 'Biology', 'Biotechnology', 'Chemical engineering', 'Industrial engineering', 'Telecommunication engineering'];
+const methods = ['Rheomicroscopy', 'Molecular dynamics', 'Finite element method', 'Triaxial magnetic fields'];
+
+const areas = [
+	{
+		title: 'Rheomicroscopy',
+		text: 'Direct observation of magnetic colloids and gels under flow and field, linking microstructure to macroscopic response.',
+	},
+	{
+		title: 'Particle-level simulations',
+		text: 'Molecular dynamics models that capture how individual magnetic particles assemble, interact and self-organise.',
+	},
+	{
+		title: 'Finite element modelling',
+		text: 'Continuum simulations of magnetic soft materials to design devices and predict behaviour at the macro scale.',
+	},
+	{
+		title: 'Nanomedicine',
+		text: 'Cancer treatment and tissue regeneration driven by non-stationary triaxial magnetic fields with custom-built equipment.',
+	},
+];
+
+const partners = [
+	'Total Marketing Services', 'Maxamcorp Holding', 'Unilever R&D', 'PDVSA', 'Repsol-YPF', 'Kolmer S.A.',
+	'Rylesa', 'Polymat', 'NanoMyP', 'Nanogetic', 'Microliquid', 'Operon',
+];
+
+const news = pressData.flatMap((y) => y.items.map((i) => ({ ...i, year: y.year }))).slice(0, 3);
+const latest = news[0];
+const formatDate = (d: string, year: string) =>
+	d ? new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : year;
+---
+
+<Layout title="Magnetic Soft Matter Group - Home">
+	{latest && (
+		<div class="bg-ink-950 text-white">
+			<div class="container mx-auto flex flex-wrap items-center justify-center gap-x-6 gap-y-2 px-4 py-2.5 text-center text-sm">
+				<span class="line-clamp-1 text-white/85">{latest.en.split('.')[0]}.</span>
+				{latest.links[0] && (
+					<a href={latest.links[0].href} target="_blank" rel="noopener noreferrer" class="eyebrow rounded-full bg-mint-200 px-3 py-1 text-[0.7rem] text-ink-950 transition hover:bg-mint-400">Read the news</a>
+				)}
+			</div>
+		</div>
+	)}
+	<Header />
+	<main class="bg-background text-foreground">
+		<!-- Hero -->
+		<section class="relative overflow-hidden">
+			<div class="container mx-auto grid items-center gap-12 px-4 pt-14 pb-24 lg:grid-cols-12 lg:pt-20">
+				<div class="relative lg:col-span-7">
+					<RheologyAnimation class="aspect-[3/2] w-full" />
+				</div>
+
+				<div class="lg:col-span-5 lg:col-start-8">
+					<Eyebrow class="text-muted-foreground">Magnetic Soft Matter Group</Eyebrow>
+					<h1 class="mt-8 text-5xl font-medium leading-[0.98] md:text-7xl xl:text-[5.5rem]">
+						Driven by physics, <span class="text-brand-600 dark:text-mint-400">shaped by magnetism.</span>
+					</h1>
+					<p class="mt-8 max-w-md text-lg leading-relaxed text-muted-foreground">
+						We explore how magnetic fields shape soft materials — from nanoparticles to living tissue — combining experiments and simulations for the next generation of nanomedicine.
+					</p>
+					<div class="mt-10 flex flex-wrap gap-3">
+						<ArrowButton href="/projects">Our research</ArrowButton>
+						<ArrowButton href="/publications" variant="outline">Publications</ArrowButton>
+					</div>
+				</div>
+			</div>
+
+			<div class="pointer-events-none absolute bottom-0 left-1/2 hidden h-16 -translate-x-1/2 flex-col items-center lg:flex" aria-hidden="true">
+				<span class="h-3 w-3 rounded-full bg-mint-400"></span>
+				<span class="w-px flex-1 bg-mint-400"></span>
+			</div>
+		</section>
+
+		<!-- Full-bleed media -->
+		<section class="relative overflow-hidden" aria-label="Our team">
+			<div class="aspect-[3/2] w-full overflow-hidden md:aspect-[2/1]">
+				<img src={img('F2N2_2025_3.jpg')} alt="Group members in the F2N2 laboratory" class="slow-zoom h-full w-full object-cover object-[center_20%]" />
+			</div>
+		</section>
+
+		<!-- Mission (dark) -->
+		<section class="relative overflow-hidden bg-ink-950 py-28 text-white md:py-40">
+			<div class="pointer-events-none absolute -right-40 top-1/2 h-[36rem] w-[36rem] -translate-y-1/2 rounded-full border border-mint-400/20" aria-hidden="true"></div>
+			<div class="pointer-events-none absolute -right-20 top-1/2 h-[24rem] w-[24rem] -translate-y-1/2 rounded-full border border-mint-400/20" aria-hidden="true"></div>
+			<div class="pointer-events-none absolute right-24 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-coral-400" aria-hidden="true"></div>
+
+			<div class="container relative mx-auto grid gap-16 px-4 lg:grid-cols-12">
+				<div class="reveal lg:col-span-6 lg:col-start-2">
+					<h2 class="text-4xl font-medium leading-[1.05] md:text-6xl">
+						Magnetic fields let us program matter from the inside out.
+					</h2>
+					<p class="mt-10 max-w-xl text-lg leading-relaxed text-white/75">
+						The Magnetic Soft Matter Group brings together a multidisciplinary team of young researchers from diverse backgrounds in physics, chemistry, biology, biotechnology, chemical engineering, industrial and telecommunication engineering.
+					</p>
+					<p class="eyebrow mt-8 text-mint-400">At F2N2Lab, we turn magnetic soft matter into real-world solutions.</p>
+				</div>
+				<div class="reveal lg:col-span-4 lg:col-start-9">
+					<ul class="divide-y divide-white/10 border-y border-white/10">
+						{disciplines.map((d, i) => (
+							<li class="flex items-baseline gap-6 py-4">
+								<span class="eyebrow text-mint-400/70">{String(i + 1).padStart(2, '0')}</span>
+								<span class="font-display text-xl">{d}</span>
+							</li>
+						))}
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		<!-- Research -->
+		<section class="py-28 md:py-36">
+			<div class="container mx-auto px-4">
+				<div class="grid items-end gap-10 lg:grid-cols-12">
+					<div class="reveal lg:col-span-6 lg:col-start-2">
+						<Eyebrow class="text-muted-foreground">Researching thoroughly</Eyebrow>
+						<h2 class="mt-6 text-4xl font-medium leading-[1.05] md:text-6xl">From particles to patients</h2>
+					</div>
+					<p class="reveal text-lg leading-relaxed text-muted-foreground lg:col-span-4">
+						At the Singular Laboratory in Advanced Technologies F2N2Lab we carry out cutting-edge research on magnetic nanomaterials using complementary experimental and computational tools.
+					</p>
+				</div>
+
+				<div class="mt-20 grid gap-12 lg:grid-cols-12">
+					<div class="reveal lg:col-span-5 lg:col-start-2">
+						<div class="sticky top-28 overflow-hidden rounded-[2rem]">
+							<img src={img('F2N2 (90).jpg')} alt="Research in the F2N2 laboratory" class="aspect-[4/5] w-full object-cover" />
+						</div>
+					</div>
+					<ol class="lg:col-span-5 lg:col-start-7">
+						{areas.map((a, i) => (
+							<li class="reveal group border-t border-border py-10 last:border-b">
+								<div class="flex items-start gap-8">
+									<span class="eyebrow mt-2 text-brand-600 dark:text-mint-400">{String(i + 1).padStart(2, '0')}</span>
+									<div>
+										<h3 class="text-3xl font-medium transition-colors group-hover:text-brand-600 dark:group-hover:text-mint-400 md:text-4xl">{a.title}</h3>
+										<p class="mt-4 max-w-md leading-relaxed text-muted-foreground">{a.text}</p>
+									</div>
+								</div>
+							</li>
+						))}
+					</ol>
+				</div>
+			</div>
+		</section>
+
+		<!-- Partnerships (dark red) -->
+		<section class="bg-coral-900 py-28 text-white md:py-36">
+			<div class="container mx-auto px-4">
+				<div class="grid gap-12 lg:grid-cols-12">
+					<div class="reveal lg:col-span-4 lg:col-start-2">
+						<Eyebrow tone="coral" class="text-coral-300">Our partnerships</Eyebrow>
+						<h2 class="mt-6 text-4xl font-medium leading-[1.05] md:text-5xl">Partnering with industry to move science forward</h2>
+						<p class="mt-8 text-lg leading-relaxed text-white/70">
+							We collaborate with leading institutes and companies, translating fundamental research on magnetic soft matter into applied solutions.
+						</p>
+					</div>
+					<ul class="reveal grid grid-cols-2 self-end border-l border-t border-white/10 sm:grid-cols-3 lg:col-span-6 lg:col-start-7">
+						{partners.map((p) => (
+							<li class="flex min-h-28 items-center justify-center border-b border-r border-white/10 p-4 text-center font-display text-lg text-white/80 transition-colors hover:bg-white/5 hover:text-coral-300">{p}</li>
+						))}
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		<!-- Team -->
+		<section class="py-28 md:py-36">
+			<div class="container mx-auto grid items-center gap-14 px-4 lg:grid-cols-12">
+				<div class="reveal lg:col-span-6">
+					<div class="grid grid-cols-5 gap-4">
+						<div class="col-span-3 flex flex-col gap-4">
+							<img src={img('F2N2 (12).jpg', 'about')} alt="Rheomicroscopy equipment in the laboratory" class="aspect-[3/4] w-full rounded-[2rem] object-cover" />
+							<img src={img('F2N2 (24).jpg')} alt="Members of the Magnetic Soft Matter Group" class="aspect-[2/1] w-full rounded-[1.5rem] object-cover" />
+						</div>
+						<div class="col-span-2 flex flex-col gap-4 pt-16">
+							<img src={img('F2N2 (93).jpg')} alt="Researchers at work" class="aspect-square w-full rounded-[1.5rem] object-cover" />
+							<img src={img('F2N2 (77).jpg')} alt="Experimental setup in the lab" class="aspect-[3/4] w-full rounded-[1.5rem] object-cover" />
+						</div>
+					</div>
+				</div>
+				<div class="reveal lg:col-span-4 lg:col-start-8">
+					<Eyebrow class="text-muted-foreground">Our team</Eyebrow>
+					<h2 class="mt-6 text-4xl font-medium leading-[1.05] md:text-6xl">The minds behind the matter</h2>
+					<p class="mt-8 text-lg leading-relaxed text-muted-foreground">An international, well-established team with a passion for magnetic research.</p>
+					<div class="mt-10 flex flex-wrap gap-3">
+						<ArrowButton href="/people">Meet the team</ArrowButton>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- News -->
+		<section class="bg-mint-100 py-28 text-ink-950 md:py-36 dark:bg-ink-900 dark:text-white">
+			<div class="container mx-auto px-4">
+				<div class="reveal flex flex-wrap items-end justify-between gap-8">
+					<div>
+						<Eyebrow class="text-ink-600 dark:text-white/60">News</Eyebrow>
+						<h2 class="mt-6 text-4xl font-medium leading-[1.05] md:text-6xl">Latest from the lab</h2>
+					</div>
+					<ArrowButton href="/press">All news</ArrowButton>
+				</div>
+
+				<ul class="mt-16 grid gap-6 md:grid-cols-3">
+					{news.map((n) => (
+						<li class="reveal">
+							<a href={n.links[0]?.href ?? '/press'} target={n.links[0] ? '_blank' : undefined} rel={n.links[0] ? 'noopener noreferrer' : undefined} class="group flex h-full flex-col justify-between rounded-[1.5rem] bg-white p-8 transition hover:-translate-y-1 hover:shadow-xl dark:bg-ink-950">
+								<div>
+									<p class="eyebrow text-ink-500 dark:text-white/50">{formatDate(n.date, n.year)}</p>
+									<h3 class="mt-6 text-2xl font-medium leading-snug">{n.title}</h3>
+									<p class="mt-4 line-clamp-3 text-sm leading-relaxed text-ink-600 dark:text-white/60">{n.en}</p>
+								</div>
+								<div class="mt-10 flex items-center justify-between">
+									<span class="eyebrow rounded-full bg-mint-200 px-3 py-1 text-[0.7rem] text-ink-950">Press</span>
+									<span class="flex h-9 w-9 items-center justify-center rounded-full bg-ink-950 text-white transition group-hover:-rotate-45 group-hover:bg-brand-600 dark:bg-mint-200 dark:text-ink-950">
+										<svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+									</span>
+								</div>
+							</a>
+						</li>
+					))}
+				</ul>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>

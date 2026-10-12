@@ -1,0 +1,299 @@
+---
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props;
+
+// FIG. 01 — plate-plate magnetorheometer cell: particle chains spanning the gap
+const chains = [100, 128, 156, 184, 212, 240];
+const beads = [0, 1, 2, 3, 4];
+
+// FIG. 02 — flow curves τ(γ̇) for increasing field (Bingham-like with yield stress)
+const plot = { x0: 360, y0: 270, w: 180, h: 170 };
+const flowCurve = (yieldStress: number) => {
+	const pts: string[] = [];
+	for (let x = 0; x <= plot.w; x += 4) {
+		const y = yieldStress * (1 - Math.exp(-x / 12)) + 0.35 * x;
+		pts.push(`${plot.x0 + x},${(plot.y0 - y).toFixed(2)}`);
+	}
+	return `M${pts.join(' L')}`;
+};
+const curves = [
+	{ d: flowCurve(0), opacity: 0.35, label: 'B = 0' },
+	{ d: flowCurve(42), opacity: 0.6, label: 'B₁' },
+	{ d: flowCurve(88), opacity: 1, label: 'B₂' },
+];
+const xTicks = Array.from({ length: 7 }, (_, i) => plot.x0 + i * 30);
+const yTicks = Array.from({ length: 6 }, (_, i) => plot.y0 - i * 34);
+
+// FIG. 03 — dipolar field lines r = k·sin²θ around a magnetised particle (axis vertical)
+const dipoleLine = (k: number, side: 1 | -1) => {
+	const pts: string[] = [];
+	for (let t = 0.22; t <= Math.PI - 0.22; t += 0.06) {
+		const r = k * Math.sin(t) ** 2;
+		pts.push(`${(side * r * Math.sin(t)).toFixed(2)},${(-r * Math.cos(t)).toFixed(2)}`);
+	}
+	return `M${pts.join(' L')}`;
+};
+const dipoleLines = [34, 54, 78, 106].flatMap((k) => [dipoleLine(k, 1), dipoleLine(k, -1)]);
+
+// FIG. 04 — DNA double helix with functionalised nanoparticles
+const helix = (phase: number) => {
+	const pts: string[] = [];
+	for (let x = -200; x <= 200; x += 3) pts.push(`${x},${(16 * Math.sin((x / 70) * 2 * Math.PI + phase)).toFixed(2)}`);
+	return `M${pts.join(' L')}`;
+};
+const rungs = Array.from({ length: 41 }, (_, i) => {
+	const x = -200 + i * 10;
+	const y = 16 * Math.sin((x / 70) * 2 * Math.PI);
+	return { x, y1: y.toFixed(2), y2: (-y).toFixed(2) };
+});
+const ligands = Array.from({ length: 8 }, (_, i) => (i / 8) * 2 * Math.PI);
+
+// Faint dot grid
+const grid: { x: number; y: number }[] = [];
+for (let x = 20; x <= 580; x += 40) for (let y = 20; y <= 620; y += 40) grid.push({ x, y });
+---
+
+<div class:list={['lab-illustration relative overflow-hidden text-foreground', className]}>
+	<svg
+		viewBox="0 0 600 640"
+		preserveAspectRatio="xMidYMid meet"
+		class="absolute inset-0 h-full w-full"
+		role="img"
+		aria-label="Animated technical schematic: a magnetorheometer cell with particle chains under shear, flow curves for increasing magnetic field, the dipolar field around a magnetised particle, and a DNA helix with nanoparticles"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="1"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+	>
+		<defs>
+			<linearGradient id="lab-fade" x1="0" x2="1" y1="0" y2="0">
+				<stop offset="0" stop-color="#fff" stop-opacity="0" />
+				<stop offset="0.2" stop-color="#fff" stop-opacity="1" />
+				<stop offset="0.8" stop-color="#fff" stop-opacity="1" />
+				<stop offset="1" stop-color="#fff" stop-opacity="0" />
+			</linearGradient>
+			<mask id="lab-helix-mask" maskUnits="userSpaceOnUse" x="-130" y="-60" width="260" height="120">
+				<rect x="-130" y="-60" width="260" height="120" fill="url(#lab-fade)" stroke="none" />
+			</mask>
+			<pattern id="lab-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+				<line x1="0" y1="0" x2="0" y2="6" stroke="var(--color-ink-400)" stroke-width="0.6" />
+			</pattern>
+			<marker id="lab-arrow" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+				<path d="M0,0 L6,3 L0,6" fill="none" stroke="currentColor" stroke-width="1" />
+			</marker>
+		</defs>
+
+		<!-- dot grid & panel dividers -->
+		<g fill="var(--color-ink-300)" stroke="none" opacity="0.5">
+			{grid.map((p) => <circle cx={p.x} cy={p.y} r="0.8" />)}
+		</g>
+		<g stroke="var(--color-ink-300)" stroke-width="0.6" stroke-dasharray="2 4" opacity="0.8">
+			<line x1="300" y1="30" x2="300" y2="610" />
+			<line x1="30" y1="330" x2="570" y2="330" />
+		</g>
+		<path d="M294,330 H306 M300,324 V336" stroke="var(--color-coral-400)" stroke-width="1" />
+
+		<g class="caption" fill="var(--color-ink-500)" stroke="none">
+			<text x="40" y="48">FIG. 01 — MR CELL</text>
+			<text x="330" y="48">FIG. 02 — FLOW CURVE</text>
+			<text x="40" y="360">FIG. 03 — DIPOLAR FIELD</text>
+			<text x="330" y="360">FIG. 04 — NANOMEDICINE</text>
+		</g>
+
+		<!-- FIG. 01: plate-plate rheometer -->
+		<g>
+			<rect x="164" y="66" width="12" height="64" fill="var(--background)" />
+			<path d="M146,86 A26,8 0 1 0 194,86" stroke="var(--color-ink-500)" stroke-width="0.8" marker-end="url(#lab-arrow)" />
+			<text class="caption" x="200" y="80" fill="var(--color-ink-500)" stroke="none">Ω</text>
+			<rect x="80" y="130" width="180" height="8" fill="var(--background)" />
+			<line class="flow" x1="84" y1="134" x2="256" y2="134" stroke="var(--color-coral-400)" stroke-width="1.2" stroke-dasharray="2 8" />
+			<rect x="70" y="210" width="200" height="8" fill="var(--background)" />
+			<rect x="70" y="218" width="200" height="12" fill="url(#lab-hatch)" stroke="none" />
+			<line x1="70" y1="230" x2="270" y2="230" stroke="var(--color-ink-400)" stroke-width="0.6" />
+
+			<g class="shear">
+				{chains.map((x) => (
+					<g>
+						<line x1={x} y1="146" x2={x} y2="202" stroke="var(--color-ink-400)" stroke-width="0.6" />
+						{beads.map((b) => (
+							<circle cx={x} cy={146 + b * 14} r="5" fill="var(--background)" stroke-width="1" />
+						))}
+					</g>
+				))}
+			</g>
+
+			<g class="field" stroke="var(--color-mint-500)" stroke-width="1">
+				<line x1="56" y1="204" x2="56" y2="146" marker-end="url(#lab-arrow)" />
+				<line x1="284" y1="204" x2="284" y2="146" marker-end="url(#lab-arrow)" />
+			</g>
+			<text class="caption" x="48" y="140" fill="var(--color-mint-500)" stroke="none">B</text>
+
+			<g stroke="var(--color-ink-400)" stroke-width="0.6">
+				<path d="M60,262 H280" marker-start="url(#lab-arrow)" marker-end="url(#lab-arrow)" />
+				<path d="M60,256 V268 M280,256 V268" />
+			</g>
+			<text class="caption" x="170" y="284" text-anchor="middle" fill="var(--color-ink-500)" stroke="none">h = 0.3 mm · ⌀ 20 mm</text>
+		</g>
+
+		<!-- FIG. 02: flow curves -->
+		<g>
+			<g stroke="var(--color-ink-400)" stroke-width="0.6">
+				{xTicks.map((x) => <line x1={x} y1={plot.y0} x2={x} y2={plot.y0 + 4} />)}
+				{yTicks.map((y) => <line x1={plot.x0 - 4} y1={y} x2={plot.x0} y2={y} />)}
+				{yTicks.slice(1).map((y) => <line x1={plot.x0} y1={y} x2={plot.x0 + plot.w} y2={y} stroke-dasharray="1 4" opacity="0.6" />)}
+			</g>
+			<path d={`M${plot.x0},${plot.y0 - plot.h - 6} V${plot.y0} H${plot.x0 + plot.w + 6}`} stroke-width="1" marker-start="url(#lab-arrow)" marker-end="url(#lab-arrow)" />
+			<text class="caption" x={plot.x0 + plot.w} y={plot.y0 + 20} text-anchor="end" fill="var(--color-ink-500)" stroke="none">shear rate</text>
+			<text class="caption" x={plot.x0 + 6} y={plot.y0 - plot.h + 2} fill="var(--color-ink-500)" stroke="none">stress</text>
+
+			{curves.map((c) => (
+				<path class="draw" d={c.d} pathLength="1" stroke-width="1.4" opacity={c.opacity} />
+			))}
+			{curves.map((c, i) => (
+				<text class="caption legend" x={plot.x0 + plot.w + 4} y={[plot.y0 - 66, plot.y0 - 106, plot.y0 - 152][i]} fill="var(--color-ink-500)" stroke="none">{c.label}</text>
+			))}
+			<circle r="3.5" fill="var(--color-coral-400)" stroke="none">
+				<animateMotion dur="7s" repeatCount="indefinite" path={curves[2].d} keyPoints="0;1;1" keyTimes="0;0.7;1" calcMode="linear" />
+			</circle>
+			<g stroke="var(--color-coral-400)" stroke-width="0.8" stroke-dasharray="2 3">
+				<line x1={plot.x0} y1={plot.y0 - 88} x2={plot.x0 + 40} y2={plot.y0 - 88} />
+			</g>
+			<text class="caption" x={plot.x0 + 44} y={plot.y0 - 85} fill="var(--color-coral-400)" stroke="none">yield stress</text>
+		</g>
+
+		<!-- FIG. 03: dipolar field -->
+		<g transform="translate(170 480)">
+			<g class="flux" stroke="var(--color-ink-400)" stroke-width="1" stroke-dasharray="0.5 5">
+				{dipoleLines.map((d) => <path d={d} />)}
+			</g>
+			<g class="breathe">
+				<circle r="14" fill="var(--background)" stroke-width="1.2" />
+				<circle r="22" stroke="var(--color-mint-500)" stroke-width="0.6" stroke-dasharray="1 3" />
+			</g>
+			<line x1="0" y1="8" x2="0" y2="-8" stroke="var(--color-coral-400)" stroke-width="1.4" marker-end="url(#lab-arrow)" />
+			<text class="caption" x="0" y="100" text-anchor="middle" fill="var(--color-ink-500)" stroke="none">m ∥ B · r = k sin²θ</text>
+		</g>
+
+		<!-- FIG. 04: DNA helix with nanoparticles -->
+		<g transform="translate(440 480)">
+			<g mask="url(#lab-helix-mask)">
+				<g class="helix">
+					{rungs.map((r) => (
+						<line x1={r.x} y1={r.y1} x2={r.x} y2={r.y2} stroke="var(--color-ink-300)" stroke-width="0.6" />
+					))}
+					<path d={helix(0)} stroke-width="1.2" />
+					<path d={helix(Math.PI)} stroke-width="1.2" stroke-dasharray="0.5 4" />
+				</g>
+			</g>
+			{[{ x: -60, y: -40, d: '0s' }, { x: 50, y: 42, d: '-4s' }].map((n) => (
+				<g transform={`translate(${n.x} ${n.y})`}>
+					<g class="bind" style={`--d:${n.d}`}>
+						{ligands.map((a) => (
+							<line x1={(9 * Math.cos(a)).toFixed(2)} y1={(9 * Math.sin(a)).toFixed(2)} x2={(15 * Math.cos(a)).toFixed(2)} y2={(15 * Math.sin(a)).toFixed(2)} stroke="var(--color-ink-400)" stroke-width="0.8" />
+						))}
+						<circle r="8" fill="var(--background)" stroke="var(--color-coral-400)" stroke-width="1.2" />
+						<circle r="3" fill="var(--color-coral-400)" stroke="none" />
+					</g>
+				</g>
+			))}
+			<text class="caption" x="0" y="100" text-anchor="middle" fill="var(--color-ink-500)" stroke="none">targeted magnetic carriers</text>
+		</g>
+	</svg>
+</div>
+
+<style>
+	.caption {
+		font-family: var(--font-mono);
+		font-size: 9px;
+		letter-spacing: 0.08em;
+	}
+
+	.shear, .breathe, .bind { transform-box: fill-box; }
+
+	/* chains tilt with the oscillating top plate */
+	.shear { animation: shear 6s ease-in-out infinite; transform-origin: 50% 100%; }
+	@keyframes shear {
+		0%, 100% { transform: skewX(-14deg); }
+		50% { transform: skewX(14deg); }
+	}
+
+	.flow { animation: flow 6s ease-in-out infinite; }
+	@keyframes flow {
+		0%, 100% { stroke-dashoffset: 0; }
+		50% { stroke-dashoffset: -40; }
+	}
+
+	.field { animation: field 6s ease-in-out infinite; }
+	@keyframes field {
+		0%, 100% { opacity: 0.35; }
+		50% { opacity: 1; }
+	}
+
+	/* flow curves trace in, hold, then fade out (70% matches the coral marker) */
+	.draw { stroke-dasharray: 1; animation: draw 7s linear infinite; }
+	@keyframes draw {
+		0% { stroke-dashoffset: 1; }
+		70% { stroke-dashoffset: 0; }
+		100% { stroke-dashoffset: 0; }
+	}
+	.legend { animation: legend 7s linear infinite; }
+	@keyframes legend {
+		0%, 60% { opacity: 0; }
+		75%, 100% { opacity: 1; }
+	}
+
+	.flux { animation: flux 3s linear infinite; }
+	@keyframes flux { to { stroke-dashoffset: -11; } }
+
+	.breathe { animation: breathe 6s ease-in-out infinite; transform-origin: center; }
+	@keyframes breathe {
+		0%, 100% { transform: scale(1); }
+		50% { transform: scale(1.06); }
+	}
+
+	.helix { animation: helix 10s linear infinite; }
+	@keyframes helix {
+		from { transform: translateX(0); }
+		to { transform: translateX(70px); }
+	}
+
+	.bind { animation: bind 8s ease-in-out var(--d, 0s) infinite; transform-origin: center; }
+	@keyframes bind {
+		0%, 100% { transform: translate(0, 0) rotate(0deg); }
+		50% { transform: translate(6px, 0) rotate(45deg); }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.lab-illustration :global(svg *) { animation: none !important; }
+		.draw { stroke-dashoffset: 0; }
+		.legend { opacity: 1; }
+	}
+</style>
+
+<script>
+	// Freeze the SMIL marker for visitors who prefer reduced motion,
+	// and pause everything while the illustration is off-screen.
+	const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	document.querySelectorAll<HTMLElement>('.lab-illustration').forEach((root) => {
+		const svg = root.querySelector('svg');
+		if (!svg) return;
+		if (reduce) {
+			svg.pauseAnimations();
+			return;
+		}
+		new IntersectionObserver(([entry]) => {
+			const on = entry.isIntersecting;
+			root.classList.toggle('is-paused', !on);
+			if (on) svg.unpauseAnimations();
+			else svg.pauseAnimations();
+		}).observe(root);
+	});
+</script>
+
+<style is:global>
+	.lab-illustration.is-paused svg * { animation-play-state: paused !important; }
+</style>
