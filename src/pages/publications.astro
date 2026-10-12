@@ -5,6 +5,34 @@ import Footer from '@/components/Footer.astro';
 import { publicationYears } from '@/data/publications';
 import { Badge } from '@/components/ui/badge';
 
+const covers = [
+  {
+    link: "https://doi.org/10.1021/acsnano.5c09450",
+    image: "/assets/images/publications/acsnano_cover.jpg",
+    alt: "ACS Nano Cover"
+  },
+  {
+    link: "https://doi.org/10.1122/8.0000646",
+    image: "/assets/images/publications/jor_cover_terkel.jpeg",
+    alt: "Journal of Rheology Cover"
+  },
+  {
+    link: "https://doi.org/10.1039/D0SM01082K",
+    image: "/assets/images/publications/back_cover_morillas.jpg",
+    alt: "Soft Matter Cover"
+  },
+  {
+    link: "https://doi.org/10.1122/1.5093628",
+    image: "/assets/images/publications/jor_cover_morillas.jpeg",
+    alt: "Journal of Rheology Cover"
+  },
+  {
+    link: "https://doi.org/10.1039/9781839169755",
+    image: "/assets/images/publications/book_cover_devicente.png",
+    alt: "Book Cover"
+  }
+];
+
 const stats = [
   { label: "Physics" },
   { label: "Chemistry" },
@@ -26,16 +54,12 @@ const stats = [
     <!-- Publication Covers -->
     <section class="py-12 bg-muted">
       <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          <a href="https://doi.org/10.1039/D0SM01082K" target="_blank" class="block rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-            <img src="/assets/images/publications/F2N2 (48).jpg" alt="Cover" class="w-full h-auto" />
-          </a>
-          <a href="https://doi.org/10.1122/1.5093628" target="_blank" class="block rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-            <img src="/assets/images/publications/F2N2 (81).jpg" alt="Cover" class="w-full h-auto" />
-          </a>
-          <a href="https://iopscience.iop.org/article/10.1088/0964-1726/23/12/125013" target="_blank" class="block rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-            <img src="/assets/images/publications/F2N2 (55).jpg" alt="Cover" class="w-full h-auto" />
-          </a>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
+          {covers.map(cover => (
+            <a href={cover.link} target="_blank" class="block rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow bg-background p-2">
+              <img src={cover.image} alt={cover.alt} class="w-full h-auto object-contain rounded" />
+            </a>
+          ))}
         </div>
       </div>
     </section>
@@ -50,9 +74,11 @@ const stats = [
               {group.items.map(item => (
                 <li class="p-4 bg-card rounded-lg shadow-sm border flex items-start justify-between gap-4">
                   <p class="text-muted-foreground leading-relaxed text-sm">{item.text}</p>
-                  <a href={item.link} target="_blank" class="shrink-0 text-blue-600 dark:text-blue-400 font-medium hover:underline text-xs bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded">
-                    link ✶
-                  </a>
+                  {item.link && (
+                    <a href={item.link} target="_blank" class="shrink-0 text-blue-600 dark:text-blue-400 font-medium hover:underline text-xs bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded">
+                      link ✶
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>
