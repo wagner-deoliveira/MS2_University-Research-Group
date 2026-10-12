@@ -2,6 +2,7 @@
 import Layout from '@/layouts/Layout.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import PageHero from '@/components/PageHero.astro';
 
 const leader = {
   name: "Prof. Juan de Vicente",
@@ -25,7 +26,8 @@ const permanentStaff = [
     role: "Associate Professor",
     description: "Bio-based Polymers, Multi-Functional Biomaterials, 3D Scaffolding Systems, Stimuli-Responsive Actuation, In vitro Biocompatibility, 3D Cell Culture",
     email: "stefania@ugr.es",
-    image: "/assets/images/people/cards/stefania.png"
+    image: "/assets/images/people/cards/stefania.png",
+    imagePosition: "30%"
   },
   {
     name: "Jose R. Morillas",
@@ -57,7 +59,8 @@ const researchStaff = [
     role: "PhD Candidate",
     description: "Bioinspired Self-Healing Hydrogels for Tissue Repair and Therapeutic Applications",
     email: "jesusjgg@ugr.es",
-    image: "/assets/images/people/cards/jesusgg.jpg"
+    image: "/assets/images/people/cards/jesusgg.jpg",
+    imagePosition: "50%"
   },
   {
     name: "Arianna Bartolomei",
@@ -71,21 +74,24 @@ const researchStaff = [
     role: "MSCA PhD Candidate",
     description: "Magnetic Biomaterials applied to Tissue Engineering",
     email: "eliocss@ugr.es",
-    image: "/assets/images/people/cards/eliocinar.jpg"
+    image: "/assets/images/people/cards/eliocinar.jpg",
+    imagePosition: "25%"
   },
   {
     name: "José Carlos Ruiz-Pelegrina López",
     role: "PhD Candidate",
     description: "Restoration of aquatic ecosystems by means of magnetic nanoparticles",
     email: "pelegrina@ugr.es",
-    image: "/assets/images/people/cards/carlosrpl.jpg"
+    image: "/assets/images/people/cards/carlosrpl.jpg",
+    imagePosition: "25%"
   },
   {
     name: "Federica Castellone",
     role: "MSCA PhD Candidate",
     description: "Tuning Model Colloidal Gels by External Magnetic Fields: Applications in Cancer Treatment",
     email: "fe.castellone@nanogetic.es",
-    image: "/assets/images/people/cards/federicac.jpg"
+    image: "/assets/images/people/cards/federicac.jpg",
+    imagePosition: "25%"
   }
 ];
 
@@ -214,111 +220,111 @@ const formerMembers = [
 
 <Layout title="Our Team - Magnetic Soft Matter Group">
   <Header />
-  <main>
-    <section class="relative h-[40vh] bg-black overflow-hidden">
-      <img src="/assets/images/people/people_jtron.jpg" alt="Background" class="absolute inset-0 w-full h-full object-cover opacity-50 blur-sm" />
-      <div class="relative z-10 container mx-auto px-4 h-full flex flex-col justify-center text-white">
-        <h1 class="text-5xl font-bold mb-4">Our Team</h1>
-        <p class="text-xl opacity-90">One by one, all of the components of our driving force</p>
-      </div>
-    </section>
+  <main class="bg-background text-foreground">
+    <PageHero
+      eyebrow="People"
+      title="Our"
+      highlight="Team"
+      subtitle="One by one, all of the components of our driving force."
+      image="/assets/images/people/people_jtron.jpg"
+      stats={[
+        { value: String(1 + permanentStaff.length), label: 'Faculty' },
+        { value: String(researchStaff.length), label: 'Researchers & PhDs' },
+        { value: String(students.length), label: 'Students' },
+        { value: String(formerMembers.reduce((n, g) => n + g.items.length, 0)), label: 'Alumni & visitors' },
+      ]}
+    />
 
-    <section class="py-16 container mx-auto px-4">
-      <!-- Group Leader -->
-      <div class="mb-20">
-        <h2 class="text-3xl font-bold mb-8 text-center border-b pb-4">Group leader</h2>
-        <div class="max-w-md mx-auto bg-card rounded-xl shadow-lg overflow-hidden border">
-          <img src={leader.image} alt={leader.name} class="w-full h-80 object-contain bg-muted" />
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-1">{leader.name}</h3>
-            <p class="text-blue-600 dark:text-blue-400 font-medium mb-3">{leader.role}</p>
-            <p class="text-muted-foreground text-sm mb-4">{leader.description}</p>
-            <div class="flex items-center justify-between text-xs text-muted-foreground/80">
-              <a href={`mailto:${leader.email}`} class="hover:underline">{leader.email}</a>
-              {leader.website && (
-                <a href={leader.website} target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">Personal Website ✶</a>
-              )}
-            </div>
+    <!-- Leader -->
+    <section class="container mx-auto px-4 py-24">
+      <div class="mx-auto grid max-w-4xl items-center overflow-hidden rounded-3xl border bg-card shadow-lg md:grid-cols-5">
+        <img src={leader.image} alt={leader.name} class="h-64 w-full bg-muted object-cover object-center md:col-span-2 md:h-full" />
+        <div class="p-6 md:col-span-3 md:p-8">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400">Group leader</p>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight md:text-4xl">{leader.name}</h2>
+          <p class="mt-1 font-medium text-muted-foreground">{leader.role}</p>
+          <div class="mt-6 flex flex-wrap gap-2">
+            {leader.description.split(', ').map(t => <span class="rounded-full border bg-muted px-3 py-1 text-sm">{t}</span>)}
+          </div>
+          <div class="mt-8 flex flex-wrap gap-4">
+            <a href={`mailto:${leader.email}`} class="rounded-full bg-slate-900 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-white dark:text-slate-900">{leader.email}</a>
+            <a href={leader.website} target="_blank" rel="noopener" class="rounded-full border px-6 py-2.5 text-sm font-semibold transition hover:bg-muted">Personal website →</a>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- Permanent Staff -->
-      <div class="mb-20">
-        <h2 class="text-3xl font-bold mb-8 text-center border-b pb-4">Permanent Staff</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {permanentStaff.map(member => (
-            <div class="bg-card rounded-xl shadow-lg overflow-hidden border flex flex-col justify-between">
-              <div>
-                <img src={member.image} alt={member.name} class="w-full h-64 object-contain bg-muted" />
-                <div class="p-6">
-                  <h3 class="text-xl font-bold mb-1">{member.name}</h3>
-                  <p class="text-blue-600 dark:text-blue-400 font-medium mb-3">{member.role}</p>
-                  <p class="text-muted-foreground text-sm mb-4">{member.description}</p>
+    {[{ title: 'Permanent staff', eyebrow: 'Faculty', list: permanentStaff }, { title: 'Research staff', eyebrow: 'Postdocs & PhD candidates', list: researchStaff }].map((sec, i) => (
+      <section class={i === 0 ? 'bg-muted/50 py-24' : 'py-24'}>
+        <div class="container mx-auto px-4">
+          <div class="mx-auto max-w-2xl text-center">
+            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400">{sec.eyebrow}</p>
+            <h2 class="mt-3 text-3xl font-bold tracking-tight md:text-5xl">{sec.title}</h2>
+          </div>
+          <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {sec.list.map((m: any) => (
+              <article class="group flex flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+                <div class="overflow-hidden bg-muted">
+                  <img src={m.image} alt={m.name} loading="lazy" class="h-72 w-full object-cover transition duration-500 group-hover:scale-105" style={`object-position: center ${m.imagePosition ?? 'top'}`} />
                 </div>
-              </div>
-              <div class="px-6 pb-6 pt-0">
-                <a href={`mailto:${member.email}`} class="text-xs text-muted-foreground/80 hover:underline">{member.email}</a>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <!-- Research Staff -->
-      <div class="mb-20">
-        <h2 class="text-3xl font-bold mb-8 text-center border-b pb-4">Research Staff</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {researchStaff.map(member => (
-            <div class="bg-card rounded-xl shadow-lg overflow-hidden border flex flex-col justify-between">
-              <div>
-                <img src={member.image} alt={member.name} class="w-full h-64 object-contain bg-muted" />
-                <div class="p-6">
-                  <h3 class="text-xl font-bold mb-1">{member.name}</h3>
-                  <p class="text-blue-600 dark:text-blue-400 font-medium mb-3">{member.role}</p>
-                  <p class="text-muted-foreground text-sm mb-4">{member.description}</p>
+                <div class="flex flex-1 flex-col p-6">
+                  <p class="text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">{m.role}</p>
+                  <h3 class="mt-2 text-lg font-semibold">{m.name}</h3>
+                  <p class="mt-2 text-sm leading-relaxed text-muted-foreground">{m.description}</p>
+                  <div class="mt-auto flex items-center justify-between gap-2 pt-6 text-xs">
+                    <a href={`mailto:${m.email}`} class="truncate text-muted-foreground hover:text-foreground hover:underline">{m.email}</a>
+                    {m.website && <a href={m.website} target="_blank" rel="noopener" class="shrink-0 font-semibold text-indigo-600 hover:underline dark:text-indigo-400">Website →</a>}
+                  </div>
                 </div>
-              </div>
-              <div class="px-6 pb-6 pt-0 flex items-center justify-between text-xs text-muted-foreground/80">
-                <a href={`mailto:${member.email}`} class="hover:underline">{member.email}</a>
-                {member.website && (
-                  <a href={member.website} target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">Personal Website ✶</a>
-                )}
-              </div>
-            </div>
-          ))}
+              </article>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
+    ))}
 
-      <!-- Students -->
-      <div class="mb-20">
-        <h2 class="text-3xl font-bold mb-8 text-center border-b pb-4">Students</h2>
-        <div class="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
-          {students.map(student => (
-            <div class="p-4 bg-muted rounded-lg text-center font-medium text-foreground border">
-              {student}
-            </div>
-          ))}
+    <!-- Students -->
+    <section class="bg-muted/50 py-24">
+      <div class="container mx-auto px-4">
+        <div class="mx-auto max-w-2xl text-center">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400">Next generation</p>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight md:text-5xl">Students</h2>
         </div>
+        <ul class="mx-auto mt-12 grid max-w-4xl gap-4 sm:grid-cols-2">
+          {students.map(s => {
+            const [name, role] = s.split('. ');
+            return (
+              <li class="flex items-center gap-4 rounded-2xl border bg-card p-5 shadow-sm">
+                <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-cyan-400 font-semibold text-white">{name.split(' ').map(w => w[0]).slice(0, 2).join('')}</span>
+                <div><p class="font-semibold">{name}</p><p class="text-sm text-muted-foreground">{role}</p></div>
+              </li>
+            );
+          })}
+        </ul>
       </div>
+    </section>
 
-      <!-- Former Team Members -->
-      <div>
-        <h2 class="text-3xl font-bold mb-8 text-center border-b pb-4">Former Team members</h2>
-        <div class="max-w-4xl mx-auto space-y-10">
-          {formerMembers.map(group => (
-            <div class="bg-card rounded-xl p-6 border shadow-sm">
-              <h3 class="text-xl font-bold mb-4 text-blue-600 dark:text-blue-400">{group.category}</h3>
-              <ul class="divide-y divide-border">
-                {group.items.map(item => (
-                  <li class="py-3 text-sm text-muted-foreground">
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+    <!-- Former members -->
+    <section class="container mx-auto px-4 py-24">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400">Alumni</p>
+        <h2 class="mt-3 text-3xl font-bold tracking-tight md:text-5xl">Former team members</h2>
+      </div>
+      <div class="mx-auto mt-12 max-w-4xl space-y-4">
+        {formerMembers.map((group, i) => (
+          <details class="group rounded-2xl border bg-card shadow-sm open:shadow-md" open={i === 0}>
+            <summary class="flex cursor-pointer list-none items-center justify-between p-6">
+              <span class="text-lg font-semibold">{group.category}</span>
+              <span class="flex items-center gap-3 text-sm text-muted-foreground">
+                {group.items.length}
+                <span class="transition group-open:rotate-45 text-xl leading-none">+</span>
+              </span>
+            </summary>
+            <ul class="divide-y divide-border border-t px-6">
+              {group.items.map(item => <li class="py-3 text-sm text-muted-foreground">{item}</li>)}
+            </ul>
+          </details>
+        ))}
       </div>
     </section>
   </main>

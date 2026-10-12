@@ -2,30 +2,51 @@
 import Layout from '@/layouts/Layout.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import PageHero from '@/components/PageHero.astro';
+
+const methods = ['Rheomicroscopy', 'Molecular dynamics', 'Finite element method', 'Triaxial magnetic fields'];
 ---
 
 <Layout title="About Us - Magnetic Soft Matter Group">
 	<Header />
-	<main>
-		<section class="relative h-[40vh] bg-black overflow-hidden">
-			<img src="/assets/images/about/about_jtron.jpg" alt="Background" class="absolute inset-0 w-full h-full object-cover opacity-50 blur-sm" />
-			<div class="relative z-10 container mx-auto px-4 h-full flex flex-col justify-center text-white">
-				<h1 class="text-5xl font-bold mb-4">About us</h1>
-				<p class="text-xl opacity-90">A motivated and professional team of scientists</p>
+	<main class="bg-background text-foreground">
+		<PageHero
+			eyebrow="About us"
+			title="A motivated and professional team of"
+			highlight="scientists"
+			subtitle="Who we are and what drives our research on magnetic soft matter at the University of Granada."
+			image="/assets/images/about/about_jtron.jpg"
+		/>
+
+		<section class="container mx-auto px-4 py-24">
+			<div class="grid items-center gap-14 lg:grid-cols-2">
+				<div class="relative">
+					<img src={`/assets/images/about/${encodeURIComponent('F2N2 (12).jpg')}`} alt="The Magnetic Soft Matter Group" class="aspect-[4/3] w-full rounded-3xl object-cover shadow-xl" />
+					<div class="absolute -bottom-6 -right-4 hidden rounded-2xl border bg-card p-5 shadow-xl sm:block">
+						<p class="text-xs uppercase tracking-widest text-muted-foreground">Singular Laboratory</p>
+						<p class="font-semibold">F2N2Lab · UGR</p>
+					</div>
+				</div>
+				<div>
+					<p class="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400">Our research</p>
+					<h2 class="mt-3 text-3xl font-bold tracking-tight md:text-5xl">Rheology research and applications</h2>
+					<p class="mt-6 text-lg leading-relaxed text-muted-foreground">
+						In the Singular Laboratory in Advanced Technologies F2N2Lab at the University of Granada, the group carries out cutting-edge research on magnetic nanomaterials through rheomicroscopy experiments, particle-level simulations (molecular dynamics), and finite element method simulations. Currently, we are developing several Nanomedicine applications, in particular cancer treatment and tissue regeneration methods, through the use of non-stationary triaxial magnetic fields using our specially designed equipment.
+					</p>
+					<div class="mt-8 flex flex-wrap gap-2">
+						{methods.map((m) => <span class="rounded-full border bg-muted px-3 py-1 text-sm">{m}</span>)}
+					</div>
+				</div>
 			</div>
 		</section>
 
-		<section class="py-16 container mx-auto px-4">
-			<div class="max-w-4xl mx-auto space-y-12">
-				<div class="rounded-xl overflow-hidden shadow-2xl">
-					<img src="/assets/images/about/F2N2 (12).jpg" alt="Group" class="w-full h-auto" />
-				</div>
-
-				<div class="prose prose-slate dark:prose-invert lg:prose-xl max-w-none">
-					<h2 class="text-3xl font-bold text-foreground mb-6">Rheology research and applications</h2>
-					<p class="text-muted-foreground leading-relaxed text-lg">
-						In the Singular Laboratory in Advanced Technologies F2N2Lab at the University of Granada, the group carries out cutting-edge research on magnetic nanomaterials through rheomicroscopy experiments, particle-level simulations (molecular dynamics), and finite element method simulations. Currently, we are developing several Nanomedicine applications, in particular cancer treatment and tissue regeneration methods, through the use of non-stationary triaxial magnetic fields using our specially designed equipment.
-					</p>
+		<section class="container mx-auto px-4 pb-24">
+			<div class="relative isolate overflow-hidden rounded-3xl bg-slate-950 px-8 py-16 text-center text-white md:px-16">
+				<div class="absolute inset-0 -z-10 bg-gradient-to-tr from-indigo-950/90 via-slate-950/80 to-cyan-900/60"></div>
+				<h2 class="text-3xl font-bold tracking-tight md:text-4xl">Discover our work</h2>
+				<div class="mt-8 flex flex-wrap justify-center gap-4">
+					<a href="/projects" class="rounded-full bg-white px-8 py-3 font-semibold text-slate-900 transition hover:bg-cyan-50">Projects</a>
+					<a href="/people" class="rounded-full border border-white/30 px-8 py-3 font-semibold transition hover:bg-white/10">Meet the people</a>
 				</div>
 			</div>
 		</section>
