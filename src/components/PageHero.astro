@@ -1,17 +1,21 @@
 ---
 import Eyebrow from '@/components/Eyebrow.astro';
+import ParticleField from '@/components/ParticleField.astro';
 
 interface Props {
 	eyebrow: string;
 	title: string;
 	highlight?: string;
 	subtitle?: string;
-	image: string;
+	image?: string;
+	/** Replace the banner image with the particle animation; the value sets the field angle in degrees. */
+	animation?: number;
+	animationLabel?: string;
 	stats?: { value: string; label: string }[];
 }
 
-const { eyebrow, title, highlight, subtitle, image, stats } = Astro.props;
-const src = image.split('/').map((p, i, a) => (i === a.length - 1 ? encodeURIComponent(p) : p)).join('/');
+const { eyebrow, title, highlight, subtitle, image, animation, animationLabel, stats } = Astro.props;
+const src = image?.split('/').map((p, i, a) => (i === a.length - 1 ? encodeURIComponent(p) : p)).join('/');
 ---
 
 <section class="relative overflow-hidden bg-background">
@@ -33,10 +37,14 @@ const src = image.split('/').map((p, i, a) => (i === a.length - 1 ? encodeURICom
 	</div>
 
 	<div class="container mx-auto px-4">
-		<div class="relative aspect-[16/9] overflow-hidden rounded-[2rem] md:aspect-[21/8]">
-			<img src={src} alt="" class="slow-zoom h-full w-full object-cover" />
-			<div class="absolute inset-0 bg-gradient-to-t from-ink-950/50 via-transparent to-transparent"></div>
-		</div>
+		{animation !== undefined ? (
+			<ParticleField angle={animation} label={animationLabel} class="aspect-[16/9] rounded-[2rem] md:aspect-[21/8]" />
+		) : src && (
+			<div class="relative aspect-[16/9] overflow-hidden rounded-[2rem] md:aspect-[21/8]">
+				<img src={src} alt="" class="slow-zoom h-full w-full object-cover" />
+				<div class="absolute inset-0 bg-gradient-to-t from-ink-950/50 via-transparent to-transparent"></div>
+			</div>
+		)}
 	</div>
 
 	{stats && stats.length > 0 && (

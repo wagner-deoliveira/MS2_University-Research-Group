@@ -32,12 +32,6 @@ const covers = [
     alt: "Book Cover"
   }
 ];
-
-const stats = [
-  { label: "Physics" },
-  { label: "Chemistry" },
-  { label: "Biology" }
-];
 ---
 
 <Layout title="Publications - Magnetic Soft Matter Group">
@@ -48,18 +42,8 @@ const stats = [
       title="Our"
       highlight="Publications"
       subtitle="We publish regularly in a variety of journals in a number of fields."
-      image="/assets/images/publications/publications_jtron.jpg"
-      stats={[
-        { value: String(publicationYears.reduce((n, g) => n + g.items.length, 0)), label: 'Listed publications' },
-        { value: String(publicationYears.length), label: 'Years of output' },
-        { value: String(covers.length), label: 'Featured covers' },
-      ]}
+      animation={90}
     >
-      <div class="mt-8 flex flex-wrap gap-2">
-        {stats.map(stat => (
-          <span class="rounded-full border border-white/20 bg-white/5 px-4 py-1 text-sm text-ink-200">{stat.label}</span>
-        ))}
-      </div>
     </PageHero>
 
     <section class="container mx-auto px-4 py-24">

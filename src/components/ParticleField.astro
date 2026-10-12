@@ -1,0 +1,274 @@
+---
+interface Props {
+	class?: string;
+	/** Direction of the applied magnetic field in degrees (0 = horizontal, 90 = vertical). */
+	angle?: number;
+	label?: string;
+}
+
+const { class: className = '', angle = 90, label = 'Magnetic particles · Live simulation' } = Astro.props;
+---
+
+<div
+	class:list={['particle-field relative overflow-hidden bg-ink-950 text-white', className]}
+	data-angle={angle}
+	role="img"
+	aria-label="Animation of magnetic particles that assemble into chains when a magnetic field is applied and disperse when it is removed"
+>
+	<canvas class="absolute inset-0 h-full w-full" aria-hidden="true"></canvas>
+
+	<div class="pointer-events-none absolute left-5 top-5 flex items-center gap-3 rounded-full bg-white/10 px-4 py-2 backdrop-blur">
+		<span class="h-2 w-2 animate-pulse rounded-full bg-mint-400"></span>
+		<span class="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-white/80">{label}</span>
+	</div>
+
+	<div class="pointer-events-none absolute right-5 top-5 hidden rounded-full border border-white/15 px-4 py-2 sm:block">
+		<span data-field-label class="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-white/60">Field off · dispersed</span>
+	</div>
+</div>
+
+<script>
+	type P = { x: number; y: number };
+
+	const A = 6; // particle radius (CSS px)
+	const CYCLE = 12; // seconds: field off -> on -> off
+	const DT = 1 / 240; // fixed integration step (s)
+	const MINT = '#a0d5cb';
+
+	function fieldAt(t: number) {
+		const p = (t % CYCLE) / CYCLE;
+		const smooth = (e0: number, e1: number, x: number) => {
+			const k = Math.min(1, Math.max(0, (x - e0) / (e1 - e0)));
+			return k * k * (3 - 2 * k);
+		};
+		return smooth(0.15, 0.25, p) * (1 - smooth(0.82, 0.92, p));
+	}
+
+	function init(root: HTMLElement) {
+		const canvas = root.querySelector('canvas') as HTMLCanvasElement;
+		const label = root.querySelector('[data-field-label]') as HTMLElement | null;
+		const ctx = canvas.getContext('2d');
+		if (!ctx) return;
+
+		const theta = (Number(root.dataset.angle ?? 90) * Math.PI) / 180;
+		const bx = Math.cos(theta);
+		const by = Math.sin(theta);
+
+		let seed = 11;
+		const rand = () => {
+			seed = (seed * 16807) % 2147483647;
+			return (seed - 1) / 2147483646;
+		};
+		const gauss = () => {
+			const u = Math.max(rand(), 1e-9);
+			return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * rand());
+		};
+
+		let W = 0;
+		let H = 0;
+		let dpr = 1;
+		let parts: P[] = [];
+
+		const resize = () => {
+			const rect = canvas.getBoundingClientRect();
+			const w = Math.max(1, rect.width);
+			const h = Math.max(1, rect.height);
+			dpr = Math.min(window.devicePixelRatio || 1, 2);
+			canvas.width = Math.round(w * dpr);
+			canvas.height = Math.round(h * dpr);
+			if (parts.length === 0 && w > 1 && h > 1) {
+				const n = Math.round(Math.min(170, Math.max(40, (w * h) / 3800)));
+				for (let i = 0; i < n; i++) parts.push({ x: rand() * w, y: rand() * h });
+			} else if (W > 0 && H > 0) {
+				for (const p of parts) {
+					p.x *= w / W;
+					p.y *= h / H;
+				}
+			}
+			W = w;
+			H = h;
+		};
+		resize();
+		new ResizeObserver(resize).observe(canvas);
+
+		let t = 0;
+		let fx = new Float32Array(0);
+		let fy = new Float32Array(0);
+
+		const wrap = (d: number, L: number) => (d > L / 2 ? d - L : d < -L / 2 ? d + L : d);
+
+		function step(dt: number) {
+			t += dt;
+			const B = fieldAt(t);
+			const N = parts.length;
+			if (fx.length !== N) {
+				fx = new Float32Array(N);
+				fy = new Float32Array(N);
+			} else {
+				fx.fill(0);
+				fy.fill(0);
+			}
+			const K = 2.2e6 * B; // dipolar strength
+			const CUT = 7 * A;
+
+			for (let i = 0; i < N; i++) {
+				const pi = parts[i];
+				for (let j = i + 1; j < N; j++) {
+					const pj = parts[j];
+					const dx = wrap(pi.x - pj.x, W);
+					const dy = wrap(pi.y - pj.y, H);
+					const r2 = dx * dx + dy * dy;
+					if (r2 > CUT * CUT) continue;
+					const r = Math.sqrt(r2) || 0.001;
+					const ux = dx / r;
+					const uy = dy / r;
+					let Fx = 0;
+					let Fy = 0;
+					if (K > 0) {
+						// point-dipole force for dipoles aligned with the field (bx, by)
+						const c = ux * bx + uy * by;
+						const m = K / (r2 * r2);
+						Fx += m * ((1 - 5 * c * c) * ux + 2 * c * bx);
+						Fy += m * ((1 - 5 * c * c) * uy + 2 * c * by);
+					}
+					const overlap = 2 * A - r;
+					if (overlap > 0) {
+						Fx += 300 * overlap * ux;
+						Fy += 300 * overlap * uy;
+					}
+					fx[i] += Fx;
+					fy[i] += Fy;
+					fx[j] -= Fx;
+					fy[j] -= Fy;
+				}
+			}
+
+			const noise = 24 * (1 - 0.85 * B);
+			const drift = 6; // gentle background flow
+			const MAXF = 400;
+			for (let i = 0; i < N; i++) {
+				const p = parts[i];
+				const Fx = Math.max(-MAXF, Math.min(MAXF, fx[i]));
+				const Fy = Math.max(-MAXF, Math.min(MAXF, fy[i]));
+				p.x += (drift + Fx) * dt + noise * Math.sqrt(dt) * gauss();
+				p.y += Fy * dt + noise * Math.sqrt(dt) * gauss();
+				p.x = ((p.x % W) + W) % W;
+				p.y = ((p.y % H) + H) % H;
+			}
+			return B;
+		}
+
+		function draw(B: number) {
+			const c = ctx!;
+			c.setTransform(1, 0, 0, 1, 0, 0);
+			c.clearRect(0, 0, canvas.width, canvas.height);
+			c.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+			// soft glows
+			const g1 = c.createRadialGradient(W * 0.78, H * 0.3, 0, W * 0.78, H * 0.3, Math.max(W, H) * 0.45);
+			g1.addColorStop(0, `rgba(160,213,203,${0.12 + 0.12 * B})`);
+			g1.addColorStop(1, 'rgba(160,213,203,0)');
+			c.fillStyle = g1;
+			c.fillRect(0, 0, W, H);
+			const g2 = c.createRadialGradient(W * 0.15, H * 0.8, 0, W * 0.15, H * 0.8, Math.max(W, H) * 0.35);
+			g2.addColorStop(0, `rgba(248,116,104,${0.06 + 0.1 * B})`);
+			g2.addColorStop(1, 'rgba(248,116,104,0)');
+			c.fillStyle = g2;
+			c.fillRect(0, 0, W, H);
+
+			// magnetic field lines
+			if (B > 0.01) {
+				c.save();
+				c.strokeStyle = `rgba(160,213,203,${0.15 * B})`;
+				c.lineWidth = 1;
+				c.setLineDash([3, 7]);
+				c.lineDashOffset = -t * 30;
+				const L = Math.hypot(W, H);
+				const nx = -by;
+				const ny = bx;
+				for (let s = -L / 2; s <= L / 2; s += 56) {
+					const cx = W / 2 + nx * s;
+					const cy = H / 2 + ny * s;
+					c.beginPath();
+					c.moveTo(cx - bx * L, cy - by * L);
+					c.lineTo(cx + bx * L, cy + by * L);
+					c.stroke();
+				}
+				c.restore();
+			}
+
+			// chain bonds between neighbours aligned with the field
+			if (B > 0.05) {
+				c.save();
+				c.lineCap = 'round';
+				c.lineWidth = 2.2;
+				c.strokeStyle = `rgba(248,116,104,${0.55 * B})`;
+				c.beginPath();
+				for (let i = 0; i < parts.length; i++) {
+					for (let j = i + 1; j < parts.length; j++) {
+						const dx = parts[j].x - parts[i].x;
+						const dy = parts[j].y - parts[i].y;
+						const r2 = dx * dx + dy * dy;
+						if (r2 > (2.6 * A) ** 2) continue;
+						const along = Math.abs(dx * bx + dy * by);
+						if (along > Math.sqrt(r2) * 0.8) {
+							c.moveTo(parts[i].x, parts[i].y);
+							c.lineTo(parts[j].x, parts[j].y);
+						}
+					}
+				}
+				c.stroke();
+				c.restore();
+			}
+
+			// particles
+			for (const p of parts) {
+				const grad = c.createRadialGradient(p.x - A * 0.35, p.y - A * 0.4, A * 0.1, p.x, p.y, A);
+				grad.addColorStop(0, '#f5fffe');
+				grad.addColorStop(0.45, B > 0.5 ? '#c3f3e2' : MINT);
+				grad.addColorStop(1, '#1f5b50');
+				c.fillStyle = grad;
+				c.beginPath();
+				c.arc(p.x, p.y, A, 0, Math.PI * 2);
+				c.fill();
+			}
+		}
+
+		const setLabel = (B: number) => {
+			if (!label) return;
+			const text = B > 0.5 ? 'Field on · chains form' : 'Field off · dispersed';
+			if (label.textContent !== text) label.textContent = text;
+		};
+
+		const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		if (reduced) {
+			let B = 0;
+			for (let k = 0; k < 1500; k++) B = step(DT);
+			draw(B);
+			setLabel(B);
+			return;
+		}
+
+		let visible = true;
+		new IntersectionObserver((entries) => {
+			visible = entries[0]?.isIntersecting ?? true;
+		}).observe(root);
+
+		let last = performance.now();
+		const loop = (now: number) => {
+			const elapsed = Math.min(1 / 20, (now - last) / 1000);
+			last = now;
+			if (visible && !document.hidden && parts.length > 0) {
+				let B = 0;
+				const sub = Math.max(1, Math.round(elapsed / DT));
+				for (let k = 0; k < sub; k++) B = step(DT);
+				draw(B);
+				setLabel(B);
+			}
+			requestAnimationFrame(loop);
+		};
+		requestAnimationFrame(loop);
+	}
+
+	document.querySelectorAll<HTMLElement>('.particle-field').forEach(init);
+</script>
