@@ -1,0 +1,345 @@
+---
+interface Props {
+	class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<div
+	class:list={['rheo-anim relative overflow-hidden rounded-[2rem] bg-ink-950 text-white', className]}
+	role="img"
+	aria-label="Animation of a magnetorheological fluid under oscillatory shear: magnetic particles form chains when a magnetic field is applied"
+>
+	<canvas class="absolute inset-0 h-full w-full" aria-hidden="true"></canvas>
+
+	<div class="pointer-events-none absolute left-5 top-5 flex items-center gap-3 rounded-full bg-white/10 px-4 py-2 backdrop-blur">
+		<span class="h-2 w-2 animate-pulse rounded-full bg-mint-400"></span>
+		<span class="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-white/80">Magnetorheology · Live simulation</span>
+	</div>
+
+	<div class="pointer-events-none absolute right-5 top-5 rounded-full border border-white/15 px-4 py-2">
+		<span data-field-label class="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-white/60">Field off</span>
+	</div>
+
+	<div class="pointer-events-none absolute bottom-4 left-5 flex flex-wrap items-center gap-x-5 gap-y-1 font-mono text-[0.6rem] uppercase tracking-[0.16em] text-white/60">
+		<span class="flex items-center gap-2"><span class="h-0.5 w-4 rounded bg-mint-400"></span>Strain γ</span>
+		<span class="flex items-center gap-2"><span class="h-0.5 w-4 rounded bg-coral-400"></span>Stress σ</span>
+	</div>
+</div>
+
+<script>
+	type P = { x: number; y: number };
+
+	const W = 600;
+	const H = 400;
+	const TOP = 52; // top (moving) plate surface
+	const BOT = 292; // bottom (fixed) plate surface
+	const GAP = BOT - TOP;
+	const A = 6.5; // particle radius
+	const N = 78;
+	const CYCLE = 14; // seconds: field off -> on -> off
+	const OMEGA = (2 * Math.PI) / 4.5; // oscillation frequency
+	const STRAIN = 0.35; // strain amplitude
+	const TRACE_Y0 = 318;
+	const TRACE_Y1 = 384;
+	const DT = 1 / 240; // fixed integration step (s)
+
+	const MINT = '#a0d5cb';
+	const CORAL = '#f87468';
+
+	function fieldAt(t: number) {
+		const p = (t % CYCLE) / CYCLE;
+		// off 0-0.18, ramp up 0.18-0.26, on 0.26-0.86, ramp down 0.86-0.94
+		const smooth = (e0: number, e1: number, x: number) => {
+			const k = Math.min(1, Math.max(0, (x - e0) / (e1 - e0)));
+			return k * k * (3 - 2 * k);
+		};
+		return smooth(0.18, 0.26, p) * (1 - smooth(0.86, 0.94, p));
+	}
+
+	function init(root: HTMLElement) {
+		const canvas = root.querySelector('canvas') as HTMLCanvasElement;
+		const label = root.querySelector('[data-field-label]') as HTMLElement;
+		const ctx = canvas.getContext('2d');
+		if (!ctx) return;
+
+		let seed = 7;
+		const rand = () => {
+			seed = (seed * 16807) % 2147483647;
+			return (seed - 1) / 2147483646;
+		};
+		const gauss = () => {
+			const u = Math.max(rand(), 1e-9);
+			return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * rand());
+		};
+
+		const parts: P[] = [];
+		for (let i = 0; i < N; i++) {
+			parts.push({ x: rand() * W, y: TOP + A + rand() * (GAP - 2 * A) });
+		}
+
+		const trace: { g: number; s: number }[] = [];
+		const TRACE_LEN = 1100;
+
+		let scale = 1;
+		let offX = 0;
+		let offY = 0;
+		const resize = () => {
+			const rect = canvas.getBoundingClientRect();
+			const dpr = Math.min(window.devicePixelRatio || 1, 2);
+			canvas.width = Math.max(1, Math.round(rect.width * dpr));
+			canvas.height = Math.max(1, Math.round(rect.height * dpr));
+			scale = Math.min(canvas.width / W, canvas.height / H);
+			offX = (canvas.width - W * scale) / 2;
+			offY = (canvas.height - H * scale) / 2;
+		};
+		resize();
+		new ResizeObserver(resize).observe(canvas);
+
+		let t = 0;
+		let plateX = 0;
+
+		function step(dt: number) {
+			t += dt;
+			const B = fieldAt(t);
+			const strain = STRAIN * Math.sin(OMEGA * t);
+			const rate = STRAIN * OMEGA * Math.cos(OMEGA * t); // shear rate
+			plateX = strain * GAP;
+
+			const fx = new Float32Array(N);
+			const fy = new Float32Array(N);
+			const K = 2.5e6 * B; // dipolar strength
+			const CUT = 7 * A;
+
+			for (let i = 0; i < N; i++) {
+				const pi = parts[i];
+				for (let j = i + 1; j < N; j++) {
+					const pj = parts[j];
+					let dx = pi.x - pj.x;
+					if (dx > W / 2) dx -= W;
+					else if (dx < -W / 2) dx += W;
+					const dy = pi.y - pj.y;
+					const r2 = dx * dx + dy * dy;
+					if (r2 > CUT * CUT) continue;
+					const r = Math.sqrt(r2) || 0.001;
+					const ux = dx / r;
+					const uy = dy / r;
+					let Fx = 0;
+					let Fy = 0;
+					if (K > 0) {
+						// point-dipole force, field along y
+						const c = uy;
+						const m = K / (r2 * r2);
+						Fx += m * (1 - 5 * c * c) * ux;
+						Fy += m * ((1 - 5 * c * c) * uy + 2 * c);
+					}
+					const overlap = 2 * A - r;
+					if (overlap > 0) {
+						Fx += 300 * overlap * ux;
+						Fy += 300 * overlap * uy;
+					}
+					fx[i] += Fx;
+					fy[i] += Fy;
+					fx[j] -= Fx;
+					fy[j] -= Fy;
+				}
+			}
+
+			const noise = 22 * (1 - 0.85 * B);
+			const MAXF = 400;
+			for (let i = 0; i < N; i++) {
+				const p = parts[i];
+				// affine shear flow: velocity grows linearly from the fixed bottom plate
+				const vFlow = rate * (BOT - p.y);
+				const Fx = Math.max(-MAXF, Math.min(MAXF, fx[i]));
+				const Fy = Math.max(-MAXF, Math.min(MAXF, fy[i]));
+				p.x += (vFlow + Fx) * dt + noise * Math.sqrt(dt) * gauss();
+				p.y += Fy * dt + noise * Math.sqrt(dt) * gauss();
+				if (p.x < 0) p.x += W;
+				if (p.x >= W) p.x -= W;
+				if (p.y < TOP + A) p.y = TOP + A;
+				if (p.y > BOT - A) p.y = BOT - A;
+			}
+
+			// stress: viscous + field-induced elastic contribution
+			const stress = 0.35 * (rate / (STRAIN * OMEGA)) * (1 - 0.4 * B) + 1.0 * B * (strain / STRAIN);
+			trace.push({ g: strain / STRAIN, s: stress / 1.4 });
+			if (trace.length > TRACE_LEN) trace.shift();
+
+			return B;
+		}
+
+		function draw(B: number) {
+			const c = ctx!;
+			c.setTransform(1, 0, 0, 1, 0, 0);
+			c.clearRect(0, 0, canvas.width, canvas.height);
+			c.setTransform(scale, 0, 0, scale, offX, offY);
+
+			// soft glows
+			const g1 = c.createRadialGradient(470, 120, 0, 470, 120, 260);
+			g1.addColorStop(0, `rgba(160,213,203,${0.12 + 0.12 * B})`);
+			g1.addColorStop(1, 'rgba(160,213,203,0)');
+			c.fillStyle = g1;
+			c.fillRect(0, 0, W, H);
+			const g2 = c.createRadialGradient(90, 300, 0, 90, 300, 220);
+			g2.addColorStop(0, `rgba(248,116,104,${0.06 + 0.1 * B})`);
+			g2.addColorStop(1, 'rgba(248,116,104,0)');
+			c.fillStyle = g2;
+			c.fillRect(0, 0, W, H);
+
+			// magnetic field lines
+			if (B > 0.01) {
+				c.save();
+				c.strokeStyle = `rgba(160,213,203,${0.16 * B})`;
+				c.lineWidth = 1;
+				c.setLineDash([3, 7]);
+				c.lineDashOffset = -t * 30;
+				for (let x = 25; x < W; x += 50) {
+					c.beginPath();
+					c.moveTo(x, TOP + 2);
+					c.lineTo(x, BOT - 2);
+					c.stroke();
+				}
+				c.restore();
+			}
+
+			// velocity profile
+			c.save();
+			c.strokeStyle = 'rgba(255,255,255,0.18)';
+			c.lineWidth = 1;
+			c.beginPath();
+			c.moveTo(W - 60, BOT);
+			c.lineTo(W - 60 + plateX * 0.25, TOP);
+			c.stroke();
+			for (let k = 1; k < 5; k++) {
+				const y = BOT - (GAP * k) / 5;
+				const len = (plateX * 0.25 * k) / 5;
+				c.beginPath();
+				c.moveTo(W - 60, y);
+				c.lineTo(W - 60 + len, y);
+				c.stroke();
+			}
+			c.restore();
+
+			// chain bonds
+			if (B > 0.05) {
+				c.save();
+				c.lineCap = 'round';
+				c.lineWidth = 2.2;
+				for (let i = 0; i < N; i++) {
+					for (let j = i + 1; j < N; j++) {
+						let dx = parts[j].x - parts[i].x;
+						if (Math.abs(dx) > W / 2) continue;
+						const dy = parts[j].y - parts[i].y;
+						const r2 = dx * dx + dy * dy;
+						if (r2 < (2.6 * A) ** 2 && Math.abs(dy) > Math.abs(dx) * 0.6) {
+							c.strokeStyle = `rgba(248,116,104,${0.55 * B})`;
+							c.beginPath();
+							c.moveTo(parts[i].x, parts[i].y);
+							c.lineTo(parts[i].x + dx, parts[i].y + dy);
+							c.stroke();
+						}
+					}
+				}
+				c.restore();
+			}
+
+			// particles
+			for (const p of parts) {
+				const grad = c.createRadialGradient(p.x - A * 0.35, p.y - A * 0.4, A * 0.1, p.x, p.y, A);
+				grad.addColorStop(0, '#f5fffe');
+				grad.addColorStop(0.45, B > 0.5 ? '#c3f3e2' : MINT);
+				grad.addColorStop(1, '#1f5b50');
+				c.fillStyle = grad;
+				c.beginPath();
+				c.arc(p.x, p.y, A, 0, Math.PI * 2);
+				c.fill();
+			}
+
+			// plates
+			c.fillStyle = '#1f3833';
+			c.fillRect(0, BOT, W, 10);
+			c.fillStyle = 'rgba(160,213,203,0.35)';
+			c.fillRect(0, BOT, W, 1.5);
+			c.save();
+			c.translate(plateX, 0);
+			c.fillStyle = '#344a45';
+			c.fillRect(-W, TOP - 12, W * 3, 12);
+			c.fillStyle = MINT;
+			c.fillRect(-W, TOP - 1.5, W * 3, 1.5);
+			c.strokeStyle = 'rgba(255,255,255,0.12)';
+			c.lineWidth = 1;
+			for (let x = -W; x < 2 * W; x += 14) {
+				c.beginPath();
+				c.moveTo(x, TOP - 12);
+				c.lineTo(x + 10, TOP - 2);
+				c.stroke();
+			}
+			c.restore();
+
+			// rheogram trace
+			const mid = (TRACE_Y0 + TRACE_Y1) / 2;
+			const amp = (TRACE_Y1 - TRACE_Y0) / 2 - 4;
+			c.strokeStyle = 'rgba(255,255,255,0.08)';
+			c.lineWidth = 1;
+			c.beginPath();
+			c.moveTo(150, mid);
+			c.lineTo(W - 20, mid);
+			c.stroke();
+			const dx = (W - 170) / TRACE_LEN;
+			const line = (key: 'g' | 's', color: string) => {
+				c.strokeStyle = color;
+				c.lineWidth = 2;
+				c.beginPath();
+				trace.forEach((pt, k) => {
+					const x = 150 + k * dx;
+					const y = mid - pt[key] * amp;
+					if (k === 0) c.moveTo(x, y);
+					else c.lineTo(x, y);
+				});
+				c.stroke();
+			};
+			line('g', MINT);
+			line('s', CORAL);
+		}
+
+		const setLabel = (B: number) => {
+			const on = B > 0.5;
+			const text = on ? 'Field on · chains form' : 'Field off · dispersed';
+			if (label.textContent !== text) label.textContent = text;
+		};
+
+		const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		if (reduced) {
+			t = CYCLE * 0.3;
+			let B = 0;
+			for (let k = 0; k < 1800; k++) B = step(DT);
+			draw(B);
+			setLabel(B);
+			return;
+		}
+
+		let visible = true;
+		new IntersectionObserver((entries) => {
+			visible = entries[0]?.isIntersecting ?? true;
+		}).observe(root);
+
+		let last = performance.now();
+		const loop = (now: number) => {
+			const elapsed = Math.min(1 / 20, (now - last) / 1000);
+			last = now;
+			if (visible && !document.hidden) {
+				let B = 0;
+				const sub = Math.max(1, Math.round(elapsed / DT));
+				for (let k = 0; k < sub; k++) B = step(DT);
+				draw(B);
+				setLabel(B);
+			}
+			requestAnimationFrame(loop);
+		};
+		requestAnimationFrame(loop);
+	}
+
+	document.querySelectorAll<HTMLElement>('.rheo-anim').forEach(init);
+</script>

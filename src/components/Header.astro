@@ -4,36 +4,45 @@ import { MobileNav } from './MobileNav';
 
 const navItems = [
   { name: 'Home', href: '/' },
-  { name: 'About', href: '/about' },
   { name: 'People', href: '/people' },
   { name: 'Projects', href: '/projects' },
   { name: 'Publications', href: '/publications' },
   { name: 'Press', href: '/press' },
 ];
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 
-<header class="border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 sticky top-0 z-50">
-  <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-    <div class="flex items-center gap-4">
-      <a href="/" class="flex items-center">
-        <img src="/assets/images/logo/LOGOMSMGroup_cropped.png" alt="logo" class="h-12 w-auto dark:invert" />
-      </a>
-    </div>
-
-    <div class="flex items-center space-x-4">
-      <nav class="hidden md:flex space-x-6">
-        {navItems.map((item) => (
-          <a href={item.href} class="text-muted-foreground hover:text-foreground transition-colors font-medium">
+<header class="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
+  <div class="container mx-auto grid h-20 grid-cols-[1fr_auto_1fr] items-center gap-4 px-4">
+    <nav class="hidden items-center gap-1 lg:flex" aria-label="Main">
+      {navItems.map((item) => {
+        const active = item.href === path;
+        return (
+          <a
+            href={item.href}
+            aria-current={active ? 'page' : undefined}
+            class={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${active ? 'bg-mint-200 text-ink-950' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+          >
             {item.name}
           </a>
-        ))}
-      </nav>
+        );
+      })}
+    </nav>
+    <div class="lg:hidden">
+      <MobileNav client:load items={navItems} />
+    </div>
 
-      <MobileNav client:visible items={navItems} />
+    <a href="/" class="flex items-center justify-center" aria-label="Magnetic Soft Matter Group – Home">
+      <img src="/assets/images/logo/LOGOMSMGroup_cropped.png" alt="Magnetic Soft Matter Group" class="h-11 w-auto dark:invert" />
+    </a>
 
-      <div class="border-l pl-4 flex items-center space-x-2">
-        <ModeToggle client:visible />
-      </div>
+    <div class="flex items-center justify-end gap-3">
+      <a href="mailto:f2n2lab@go.ugr.es" class="hidden items-center gap-2 rounded-full bg-mint-200 px-4 py-2 text-sm font-medium text-ink-950 transition-colors hover:bg-mint-400 md:inline-flex">
+        <span class="h-2 w-2 rounded-full bg-brand-600"></span>
+        Contact us
+      </a>
+      <ModeToggle client:visible />
     </div>
   </div>
 </header>

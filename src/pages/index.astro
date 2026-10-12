@@ -2,36 +2,31 @@
 import Layout from '@/layouts/Layout.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import Eyebrow from '@/components/Eyebrow.astro';
+import ArrowButton from '@/components/ArrowButton.astro';
+import RheologyAnimation from '@/components/RheologyAnimation.astro';
+import { pressData } from '@/data/press';
 
-const img = (name: string) => `/assets/images/index/${encodeURIComponent(name)}`;
-
-const stats = [
-	{ value: '6+', label: 'Disciplines combined' },
-	{ value: '12', label: 'Industry partners' },
-	{ value: '4', label: 'Core research lines' },
-	{ value: 'UGR', label: 'University of Granada' },
-];
+const img = (name: string, directory: 'index' | 'about' = 'index') => `/assets/images/${directory}/${encodeURIComponent(name)}`;
+const disciplines = ['Physics', 'Chemistry', 'Biology', 'Biotechnology', 'Chemical engineering', 'Industrial engineering', 'Telecommunication engineering'];
+const methods = ['Rheomicroscopy', 'Molecular dynamics', 'Finite element method', 'Triaxial magnetic fields'];
 
 const areas = [
 	{
 		title: 'Rheomicroscopy',
 		text: 'Direct observation of magnetic colloids and gels under flow and field, linking microstructure to macroscopic response.',
-		icon: 'M12 3v4m0 10v4M3 12h4m10 0h4M6.3 6.3l2.8 2.8m5.8 5.8 2.8 2.8m0-11.4-2.8 2.8m-5.8 5.8-2.8 2.8',
 	},
 	{
 		title: 'Particle-level simulations',
 		text: 'Molecular dynamics models that capture how individual magnetic particles assemble, interact and self-organise.',
-		icon: 'M7 7a2 2 0 1 0 0-.01M17 7a2 2 0 1 0 0-.01M12 17a2 2 0 1 0 0-.01M8.5 8.5l2.5 6.5m4.5-6.5L13 15M9 7h6',
 	},
 	{
 		title: 'Finite element modelling',
 		text: 'Continuum simulations of magnetic soft materials to design devices and predict behaviour at the macro scale.',
-		icon: 'M4 4h16v16H4zM4 12h16M12 4v16M4 4l16 16',
 	},
 	{
 		title: 'Nanomedicine',
 		text: 'Cancer treatment and tissue regeneration driven by non-stationary triaxial magnetic fields with custom-built equipment.',
-		icon: 'M10 2v6L4.5 18A2 2 0 0 0 6.3 21h11.4a2 2 0 0 0 1.8-3L14 8V2M8.5 2h7M7 15h10',
 	},
 ];
 
@@ -39,141 +34,202 @@ const partners = [
 	'Total Marketing Services', 'Maxamcorp Holding', 'Unilever R&D', 'PDVSA', 'Repsol-YPF', 'Kolmer S.A.',
 	'Rylesa', 'Polymat', 'NanoMyP', 'Nanogetic', 'Microliquid', 'Operon',
 ];
+
+const news = pressData.flatMap((y) => y.items.map((i) => ({ ...i, year: y.year }))).slice(0, 3);
+const latest = news[0];
+const formatDate = (d: string, year: string) =>
+	d ? new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : year;
 ---
 
 <Layout title="Magnetic Soft Matter Group - Home">
+	{latest && (
+		<div class="bg-ink-950 text-white">
+			<div class="container mx-auto flex flex-wrap items-center justify-center gap-x-6 gap-y-2 px-4 py-2.5 text-center text-sm">
+				<span class="line-clamp-1 text-white/85">{latest.en.split('.')[0]}.</span>
+				{latest.links[0] && (
+					<a href={latest.links[0].href} target="_blank" rel="noopener noreferrer" class="eyebrow rounded-full bg-mint-200 px-3 py-1 text-[0.7rem] text-ink-950 transition hover:bg-mint-400">Read the news</a>
+				)}
+			</div>
+		</div>
+	)}
 	<Header />
 	<main class="bg-background text-foreground">
 		<!-- Hero -->
-		<section class="relative isolate overflow-hidden bg-slate-950 text-white">
-			<img src={img('jtron_index_intro.jpeg')} alt="" class="absolute inset-0 -z-20 h-full w-full object-cover opacity-40" />
-			<div class="absolute inset-0 -z-10 bg-gradient-to-br from-slate-950 via-slate-950/85 to-indigo-950/70"></div>
-			<div class="absolute -right-32 -top-32 -z-10 h-[32rem] w-[32rem] rounded-full bg-indigo-500/25 blur-3xl"></div>
-			<div class="absolute -bottom-40 left-1/3 -z-10 h-[28rem] w-[28rem] rounded-full bg-cyan-400/15 blur-3xl"></div>
+		<section class="relative overflow-hidden">
+			<div class="container mx-auto grid items-center gap-12 px-4 pt-14 pb-24 lg:grid-cols-12 lg:pt-20">
+				<div class="relative lg:col-span-7">
+					<RheologyAnimation class="aspect-[3/2] w-full" />
+				</div>
 
-			<div class="container mx-auto grid items-center gap-12 px-4 py-24 md:py-32 lg:grid-cols-12">
-				<div class="lg:col-span-7">
-					<span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-cyan-200 backdrop-blur">
-						<span class="h-1.5 w-1.5 rounded-full bg-cyan-300 animate-pulse"></span>
-						F2N2Lab · University of Granada
-					</span>
-					<h1 class="mt-6 text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-						Magnetic <span class="bg-gradient-to-r from-cyan-300 via-sky-300 to-indigo-300 bg-clip-text text-transparent">Soft Matter</span> Group
+				<div class="lg:col-span-5 lg:col-start-8">
+					<Eyebrow class="text-muted-foreground">Magnetic Soft Matter Group</Eyebrow>
+					<h1 class="mt-8 text-5xl font-medium leading-[0.98] md:text-7xl xl:text-[5.5rem]">
+						Driven by physics, <span class="text-brand-600 dark:text-mint-400">shaped by magnetism.</span>
 					</h1>
-					<p class="mt-6 max-w-xl text-lg leading-relaxed text-slate-300 md:text-xl">
-						We explore how magnetic fields shape soft materials — from nanoparticles to living tissue — combining experiments and simulations to build the next generation of nanomedicine.
+					<p class="mt-8 max-w-md text-lg leading-relaxed text-muted-foreground">
+						We explore how magnetic fields shape soft materials — from nanoparticles to living tissue — combining experiments and simulations for the next generation of nanomedicine.
 					</p>
-					<div class="mt-10 flex flex-wrap gap-4">
-						<a href="/projects" class="rounded-full bg-white px-7 py-3 font-semibold text-slate-900 shadow-lg shadow-cyan-500/20 transition hover:-translate-y-0.5 hover:bg-cyan-50">Explore our research</a>
-						<a href="/publications" class="rounded-full border border-white/25 px-7 py-3 font-semibold text-white transition hover:bg-white/10">Publications →</a>
-					</div>
-				</div>
-
-				<div class="relative hidden lg:col-span-5 lg:block">
-					<div class="grid grid-cols-2 gap-4">
-						<img src={img('F2N2_2025_3.jpg')} alt="Group members in the F2N2 laboratory" class="col-span-2 h-56 w-full rounded-2xl object-cover ring-1 ring-white/10 shadow-2xl" />
-						<img src={img('F2N2 (77).jpg')} alt="Experimental setup in the lab" class="h-44 w-full rounded-2xl object-cover ring-1 ring-white/10 shadow-2xl" />
-						<img src={img('F2N2 (93).jpg')} alt="Researchers at work" class="h-44 w-full rounded-2xl object-cover ring-1 ring-white/10 shadow-2xl" />
+					<div class="mt-10 flex flex-wrap gap-3">
+						<ArrowButton href="/projects">Our research</ArrowButton>
+						<ArrowButton href="/publications" variant="outline">Publications</ArrowButton>
 					</div>
 				</div>
 			</div>
 
-			<!-- Stats -->
-			<div class="border-t border-white/10 bg-white/[0.03] backdrop-blur">
-				<dl class="container mx-auto grid grid-cols-2 gap-px px-4 md:grid-cols-4">
-					{stats.map((s) => (
-						<div class="px-4 py-8 text-center">
-							<dt class="sr-only">{s.label}</dt>
-							<dd class="text-3xl font-bold text-white md:text-4xl">{s.value}</dd>
-							<dd class="mt-1 text-sm text-slate-400">{s.label}</dd>
-						</div>
-					))}
-				</dl>
+			<div class="pointer-events-none absolute bottom-0 left-1/2 hidden h-16 -translate-x-1/2 flex-col items-center lg:flex" aria-hidden="true">
+				<span class="h-3 w-3 rounded-full bg-mint-400"></span>
+				<span class="w-px flex-1 bg-mint-400"></span>
 			</div>
 		</section>
 
-		<!-- Mobile photo strip -->
-		<section class="container mx-auto px-4 pt-10 lg:hidden" aria-label="Research group photos">
-			<div class="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2">
-				<img src={img('F2N2_2025_3.jpg')} alt="Group members in the F2N2 laboratory" class="h-56 w-[85%] shrink-0 snap-center rounded-2xl object-cover" />
-				<img src={img('F2N2 (77).jpg')} alt="Experimental setup in the lab" class="h-56 w-[85%] shrink-0 snap-center rounded-2xl object-cover" />
-				<img src={img('F2N2 (93).jpg')} alt="Researchers at work" class="h-56 w-[85%] shrink-0 snap-center rounded-2xl object-cover" />
+		<!-- Full-bleed media -->
+		<section class="relative overflow-hidden" aria-label="Our team">
+			<div class="aspect-[3/2] w-full overflow-hidden md:aspect-[2/1]">
+				<img src={img('F2N2_2025_3.jpg')} alt="Group members in the F2N2 laboratory" class="slow-zoom h-full w-full object-cover object-[center_20%]" />
 			</div>
 		</section>
 
-		<!-- About -->
-		<section class="container mx-auto px-4 py-24">
-			<div class="grid items-center gap-14 lg:grid-cols-2">
-				<div class="relative">
-					<img src={img('F2N2 (24).jpg')} alt="Members of the Magnetic Soft Matter Group" class="aspect-[4/3] w-full rounded-3xl object-cover shadow-xl" />
-					<div class="absolute -bottom-6 -right-4 hidden rounded-2xl border bg-card p-5 shadow-xl sm:block">
-						<p class="text-xs uppercase tracking-widest text-muted-foreground">Based at</p>
-						<p class="font-semibold">F2N2Lab, Granada</p>
-					</div>
-				</div>
-				<div>
-					<p class="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400">About us</p>
-					<h2 class="mt-3 text-3xl font-bold tracking-tight md:text-5xl">A multidisciplinary team of young researchers</h2>
-					<p class="mt-6 text-lg leading-relaxed text-muted-foreground">
-						The Magnetic Soft Matter Group brings together scientists from diverse backgrounds in physics, chemistry, biology, biotechnology, chemical engineering, industrial and telecommunication engineering.
+		<!-- Mission (dark) -->
+		<section class="relative overflow-hidden bg-ink-950 py-28 text-white md:py-40">
+			<div class="pointer-events-none absolute -right-40 top-1/2 h-[36rem] w-[36rem] -translate-y-1/2 rounded-full border border-mint-400/20" aria-hidden="true"></div>
+			<div class="pointer-events-none absolute -right-20 top-1/2 h-[24rem] w-[24rem] -translate-y-1/2 rounded-full border border-mint-400/20" aria-hidden="true"></div>
+			<div class="pointer-events-none absolute right-24 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-coral-400" aria-hidden="true"></div>
+
+			<div class="container relative mx-auto grid gap-16 px-4 lg:grid-cols-12">
+				<div class="reveal lg:col-span-6 lg:col-start-2">
+					<h2 class="text-4xl font-medium leading-[1.05] md:text-6xl">
+						Magnetic fields let us program matter from the inside out.
+					</h2>
+					<p class="mt-10 max-w-xl text-lg leading-relaxed text-white/75">
+						The Magnetic Soft Matter Group brings together a multidisciplinary team of young researchers from diverse backgrounds in physics, chemistry, biology, biotechnology, chemical engineering, industrial and telecommunication engineering.
 					</p>
-					<div class="mt-8 flex flex-wrap gap-2">
-						{['Physics', 'Chemistry', 'Biology', 'Biotechnology', 'Chemical Eng.', 'Telecom Eng.'].map((d) => (
-							<span class="rounded-full border bg-muted px-3 py-1 text-sm">{d}</span>
+					<p class="eyebrow mt-8 text-mint-400">At F2N2Lab, we turn magnetic soft matter into real-world solutions.</p>
+				</div>
+				<div class="reveal lg:col-span-4 lg:col-start-9">
+					<ul class="divide-y divide-white/10 border-y border-white/10">
+						{disciplines.map((d, i) => (
+							<li class="flex items-baseline gap-6 py-4">
+								<span class="eyebrow text-mint-400/70">{String(i + 1).padStart(2, '0')}</span>
+								<span class="font-display text-xl">{d}</span>
+							</li>
 						))}
-					</div>
+					</ul>
 				</div>
 			</div>
 		</section>
 
-		<!-- Research areas -->
-		<section class="bg-muted/50 py-24">
+		<!-- Research -->
+		<section class="py-28 md:py-36">
 			<div class="container mx-auto px-4">
-				<div class="mx-auto max-w-2xl text-center">
-					<p class="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400">Researching thoroughly</p>
-					<h2 class="mt-3 text-3xl font-bold tracking-tight md:text-5xl">From particles to patients</h2>
-					<p class="mt-6 text-lg leading-relaxed text-muted-foreground">
+				<div class="grid items-end gap-10 lg:grid-cols-12">
+					<div class="reveal lg:col-span-6 lg:col-start-2">
+						<Eyebrow class="text-muted-foreground">Researching thoroughly</Eyebrow>
+						<h2 class="mt-6 text-4xl font-medium leading-[1.05] md:text-6xl">From particles to patients</h2>
+					</div>
+					<p class="reveal text-lg leading-relaxed text-muted-foreground lg:col-span-4">
 						At the Singular Laboratory in Advanced Technologies F2N2Lab we carry out cutting-edge research on magnetic nanomaterials using complementary experimental and computational tools.
 					</p>
 				</div>
-				<div class="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-					{areas.map((a) => (
-						<article class="group rounded-2xl border bg-card p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-							<div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 text-white shadow-md">
-								<svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={a.icon} /></svg>
-							</div>
-							<h3 class="mt-6 text-lg font-semibold">{a.title}</h3>
-							<p class="mt-2 text-sm leading-relaxed text-muted-foreground">{a.text}</p>
-						</article>
-					))}
-				</div>
-				<div class="mt-16 overflow-hidden rounded-3xl">
-					<img src={img('F2N2 (90).jpg')} alt="Research in the F2N2 laboratory" class="h-72 w-full object-cover md:h-96" />
+
+				<div class="mt-20 grid gap-12 lg:grid-cols-12">
+					<div class="reveal lg:col-span-5 lg:col-start-2">
+						<div class="sticky top-28 overflow-hidden rounded-[2rem]">
+							<img src={img('F2N2 (90).jpg')} alt="Research in the F2N2 laboratory" class="aspect-[4/5] w-full object-cover" />
+						</div>
+					</div>
+					<ol class="lg:col-span-5 lg:col-start-7">
+						{areas.map((a, i) => (
+							<li class="reveal group border-t border-border py-10 last:border-b">
+								<div class="flex items-start gap-8">
+									<span class="eyebrow mt-2 text-brand-600 dark:text-mint-400">{String(i + 1).padStart(2, '0')}</span>
+									<div>
+										<h3 class="text-3xl font-medium transition-colors group-hover:text-brand-600 dark:group-hover:text-mint-400 md:text-4xl">{a.title}</h3>
+										<p class="mt-4 max-w-md leading-relaxed text-muted-foreground">{a.text}</p>
+									</div>
+								</div>
+							</li>
+						))}
+					</ol>
 				</div>
 			</div>
 		</section>
 
-		<!-- Partners -->
-		<section class="container mx-auto px-4 py-24">
-			<p class="text-center text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">Collaborating with leading institutes and companies</p>
-			<ul class="mt-10 flex flex-wrap justify-center gap-3">
-				{partners.map((p) => (
-					<li class="rounded-xl border bg-card px-5 py-3 text-sm font-medium text-muted-foreground transition hover:border-indigo-400 hover:text-foreground">{p}</li>
-				))}
-			</ul>
+		<!-- Partnerships (dark red) -->
+		<section class="bg-coral-900 py-28 text-white md:py-36">
+			<div class="container mx-auto px-4">
+				<div class="grid gap-12 lg:grid-cols-12">
+					<div class="reveal lg:col-span-4 lg:col-start-2">
+						<Eyebrow tone="coral" class="text-coral-300">Our partnerships</Eyebrow>
+						<h2 class="mt-6 text-4xl font-medium leading-[1.05] md:text-5xl">Partnering with industry to move science forward</h2>
+						<p class="mt-8 text-lg leading-relaxed text-white/70">
+							We collaborate with leading institutes and companies, translating fundamental research on magnetic soft matter into applied solutions.
+						</p>
+					</div>
+					<ul class="reveal grid grid-cols-2 self-end border-l border-t border-white/10 sm:grid-cols-3 lg:col-span-6 lg:col-start-7">
+						{partners.map((p) => (
+							<li class="flex min-h-28 items-center justify-center border-b border-r border-white/10 p-4 text-center font-display text-lg text-white/80 transition-colors hover:bg-white/5 hover:text-coral-300">{p}</li>
+						))}
+					</ul>
+				</div>
+			</div>
 		</section>
 
-		<!-- CTA -->
-		<section class="container mx-auto px-4 pb-24">
-			<div class="relative isolate overflow-hidden rounded-3xl bg-slate-950 px-8 py-20 text-center text-white md:px-16">
-				<img src={img('jtron_mpage_index.jpg')} alt="" class="absolute inset-0 -z-20 h-full w-full object-cover opacity-25" />
-				<div class="absolute inset-0 -z-10 bg-gradient-to-tr from-indigo-950/90 via-slate-950/80 to-cyan-900/60"></div>
-				<h2 class="text-3xl font-bold tracking-tight md:text-5xl">Our team</h2>
-				<p class="mx-auto mt-4 max-w-2xl text-lg text-slate-300">An international, well-established team with a passion for magnetic research.</p>
-				<div class="mt-10 flex flex-wrap justify-center gap-4">
-					<a href="/about" class="rounded-full bg-white px-8 py-3 font-semibold text-slate-900 transition hover:bg-cyan-50">Research</a>
-					<a href="/people" class="rounded-full border border-white/30 px-8 py-3 font-semibold transition hover:bg-white/10">Meet the people</a>
+		<!-- Team -->
+		<section class="py-28 md:py-36">
+			<div class="container mx-auto grid items-center gap-14 px-4 lg:grid-cols-12">
+				<div class="reveal lg:col-span-6">
+					<div class="grid grid-cols-5 gap-4">
+						<div class="col-span-3 flex flex-col gap-4">
+							<img src={img('F2N2 (12).jpg', 'about')} alt="Rheomicroscopy equipment in the laboratory" class="aspect-[3/4] w-full rounded-[2rem] object-cover" />
+							<img src={img('F2N2 (24).jpg')} alt="Members of the Magnetic Soft Matter Group" class="aspect-[2/1] w-full rounded-[1.5rem] object-cover" />
+						</div>
+						<div class="col-span-2 flex flex-col gap-4 pt-16">
+							<img src={img('F2N2 (93).jpg')} alt="Researchers at work" class="aspect-square w-full rounded-[1.5rem] object-cover" />
+							<img src={img('F2N2 (77).jpg')} alt="Experimental setup in the lab" class="aspect-[3/4] w-full rounded-[1.5rem] object-cover" />
+						</div>
+					</div>
 				</div>
+				<div class="reveal lg:col-span-4 lg:col-start-8">
+					<Eyebrow class="text-muted-foreground">Our team</Eyebrow>
+					<h2 class="mt-6 text-4xl font-medium leading-[1.05] md:text-6xl">The minds behind the matter</h2>
+					<p class="mt-8 text-lg leading-relaxed text-muted-foreground">An international, well-established team with a passion for magnetic research.</p>
+					<div class="mt-10 flex flex-wrap gap-3">
+						<ArrowButton href="/people">Meet the team</ArrowButton>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- News -->
+		<section class="bg-mint-100 py-28 text-ink-950 md:py-36 dark:bg-ink-900 dark:text-white">
+			<div class="container mx-auto px-4">
+				<div class="reveal flex flex-wrap items-end justify-between gap-8">
+					<div>
+						<Eyebrow class="text-ink-600 dark:text-white/60">News</Eyebrow>
+						<h2 class="mt-6 text-4xl font-medium leading-[1.05] md:text-6xl">Latest from the lab</h2>
+					</div>
+					<ArrowButton href="/press">All news</ArrowButton>
+				</div>
+
+				<ul class="mt-16 grid gap-6 md:grid-cols-3">
+					{news.map((n) => (
+						<li class="reveal">
+							<a href={n.links[0]?.href ?? '/press'} target={n.links[0] ? '_blank' : undefined} rel={n.links[0] ? 'noopener noreferrer' : undefined} class="group flex h-full flex-col justify-between rounded-[1.5rem] bg-white p-8 transition hover:-translate-y-1 hover:shadow-xl dark:bg-ink-950">
+								<div>
+									<p class="eyebrow text-ink-500 dark:text-white/50">{formatDate(n.date, n.year)}</p>
+									<h3 class="mt-6 text-2xl font-medium leading-snug">{n.title}</h3>
+									<p class="mt-4 line-clamp-3 text-sm leading-relaxed text-ink-600 dark:text-white/60">{n.en}</p>
+								</div>
+								<div class="mt-10 flex items-center justify-between">
+									<span class="eyebrow rounded-full bg-mint-200 px-3 py-1 text-[0.7rem] text-ink-950">Press</span>
+									<span class="flex h-9 w-9 items-center justify-center rounded-full bg-ink-950 text-white transition group-hover:-rotate-45 group-hover:bg-brand-600 dark:bg-mint-200 dark:text-ink-950">
+										<svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+									</span>
+								</div>
+							</a>
+						</li>
+					))}
+				</ul>
 			</div>
 		</section>
 	</main>
