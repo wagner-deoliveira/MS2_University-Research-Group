@@ -238,7 +238,12 @@ const formerMembers = [
       title="Our"
       highlight="Team"
       subtitle="One by one, all of the components of our driving force."
-      image="/assets/images/people/people_jtron.jpg"
+      team={[
+        { name: leader.name, image: leader.image, ring: 0 },
+        ...permanentStaff.map((m) => ({ name: m.name, image: m.image, imagePosition: m.imagePosition, ring: 1 as const })),
+        ...researchStaff.map((m) => ({ name: m.name, image: m.image, imagePosition: m.imagePosition, ring: 2 as const })),
+        ...team.filter((m) => m.initials).map((m) => ({ name: m.name, initials: m.initials, ring: 3 as const })),
+      ]}
       stats={[
         { value: String(1 + permanentStaff.length), label: 'Faculty' },
         { value: String(researchStaff.length), label: 'Researchers & PhDs' },

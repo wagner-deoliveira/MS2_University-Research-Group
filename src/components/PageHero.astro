@@ -1,6 +1,8 @@
 ---
 import Eyebrow from '@/components/Eyebrow.astro';
 import ParticleField from '@/components/ParticleField.astro';
+import LabIllustration from '@/components/LabIllustration.astro';
+import TeamNetwork, { type TeamNode } from '@/components/TeamNetwork.astro';
 
 interface Props {
 	eyebrow: string;
@@ -11,40 +13,41 @@ interface Props {
 	/** Replace the banner image with the particle animation; the value sets the field angle in degrees. */
 	animation?: number;
 	animationLabel?: string;
+	/** Replace the banner image with the animated lab line illustration. */
+	illustration?: boolean;
+	/** Replace the banner image with the animated orbiting team network. */
+	team?: TeamNode[];
 	stats?: { value: string; label: string }[];
 }
 
-const { eyebrow, title, highlight, subtitle, image, animation, animationLabel, stats } = Astro.props;
+const { eyebrow, title, highlight, subtitle, image, animation, animationLabel, illustration, team, stats } = Astro.props;
 const src = image?.split('/').map((p, i, a) => (i === a.length - 1 ? encodeURIComponent(p) : p)).join('/');
 ---
 
 <section class="relative overflow-hidden bg-background">
-	<div class="container mx-auto px-4 pt-16 pb-14 md:pt-24">
-		<div class="grid items-end gap-10 lg:grid-cols-12">
-			<div class="lg:col-span-7 lg:col-start-2">
+	<div class="grid border-b border-border lg:min-h-[78vh] lg:grid-cols-2">
+		{team && team.length > 0 ? (
+			<TeamNetwork members={team} class="h-[46vh] min-h-[320px] lg:h-auto" />
+		) : illustration ? (
+			<LabIllustration class="h-[46vh] min-h-[320px] lg:h-auto" />
+		) : animation !== undefined ? (
+			<ParticleField angle={animation} label={animationLabel} class="h-[46vh] min-h-[320px] lg:h-auto" />
+		) : src && (
+			<div class="relative h-[46vh] min-h-[320px] overflow-hidden lg:h-auto">
+				<img src={src} alt="" class="slow-zoom absolute inset-0 h-full w-full object-cover" />
+			</div>
+		)}
+		<div class="relative flex items-center border-t border-border px-6 py-16 md:px-12 lg:border-l lg:border-t-0 lg:px-16 lg:py-24">
+			<span class="absolute -left-[5px] top-14 hidden h-2.5 w-2.5 rounded-full bg-mint-400 lg:block"></span>
+			<div class="max-w-xl">
 				<Eyebrow class="text-muted-foreground">{eyebrow}</Eyebrow>
 				<h1 class="mt-8 text-5xl font-medium leading-[0.98] md:text-7xl">
 					{title}{highlight && <> <span class="text-brand-600 dark:text-mint-400">{highlight}</span></>}
 				</h1>
+				{subtitle && <p class="mt-8 max-w-md text-lg leading-relaxed text-muted-foreground">{subtitle}</p>}
+				<slot />
 			</div>
-			{subtitle && (
-				<div class="lg:col-span-3">
-					<p class="text-lg leading-relaxed text-muted-foreground">{subtitle}</p>
-				</div>
-			)}
 		</div>
-		<slot />
-	</div>
-
-	<div class="container mx-auto px-4">
-		{animation !== undefined ? (
-			<ParticleField angle={animation} label={animationLabel} class="aspect-[16/9] rounded-[2rem] md:aspect-[21/8]" />
-		) : src && (
-			<div class="relative aspect-[16/9] overflow-hidden rounded-[2rem] md:aspect-[21/8]">
-				<img src={src} alt="" class="slow-zoom h-full w-full object-cover" />
-				<div class="absolute inset-0 bg-gradient-to-t from-ink-950/50 via-transparent to-transparent"></div>
-			</div>
-		)}
 	</div>
 
 	{stats && stats.length > 0 && (

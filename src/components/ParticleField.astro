@@ -10,20 +10,18 @@ const { class: className = '', angle = 90, label = 'Magnetic particles · Live s
 ---
 
 <div
-	class:list={['particle-field relative overflow-hidden bg-ink-950 text-white', className]}
+	class:list={['particle-field relative overflow-hidden', className]}
 	data-angle={angle}
 	role="img"
 	aria-label="Animation of magnetic particles that assemble into chains when a magnetic field is applied and disperse when it is removed"
 >
 	<canvas class="absolute inset-0 h-full w-full" aria-hidden="true"></canvas>
 
-	<div class="pointer-events-none absolute left-5 top-5 flex items-center gap-3 rounded-full bg-white/10 px-4 py-2 backdrop-blur">
-		<span class="h-2 w-2 animate-pulse rounded-full bg-mint-400"></span>
-		<span class="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-white/80">{label}</span>
-	</div>
-
-	<div class="pointer-events-none absolute right-5 top-5 hidden rounded-full border border-white/15 px-4 py-2 sm:block">
-		<span data-field-label class="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-white/60">Field off · dispersed</span>
+	<div class="pointer-events-none absolute bottom-5 left-5 flex items-center gap-2 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground">
+		<span class="h-1.5 w-1.5 rounded-full bg-coral-400"></span>
+		<span>{label}</span>
+		<span class="text-border">/</span>
+		<span data-field-label>Field off · dispersed</span>
 	</div>
 </div>
 
@@ -33,7 +31,11 @@ const { class: className = '', angle = 90, label = 'Magnetic particles · Live s
 	const A = 6; // particle radius (CSS px)
 	const CYCLE = 12; // seconds: field off -> on -> off
 	const DT = 1 / 240; // fixed integration step (s)
-	const MINT = '#a0d5cb';
+	const DOT = 2.4; // drawn dot radius (CSS px)
+	// shades of green from faint to deep, as on profluent.bio
+	const LIGHT = ['#cfe8e1', '#a0d5cb', '#77afa5', '#4fb59f', '#008169'];
+	const DARK = ['#1f5b50', '#2f7a6b', '#4fb59f', '#77afa5', '#c3f3e2'];
+	const CORAL = '#f87468';
 
 	function fieldAt(t: number) {
 		const p = (t % CYCLE) / CYCLE;
@@ -68,6 +70,7 @@ const { class: className = '', angle = 90, label = 'Magnetic particles · Live s
 		let H = 0;
 		let dpr = 1;
 		let parts: P[] = [];
+		let tone: number[] = [];
 
 		const resize = () => {
 			const rect = canvas.getBoundingClientRect();
@@ -78,7 +81,10 @@ const { class: className = '', angle = 90, label = 'Magnetic particles · Live s
 			canvas.height = Math.round(h * dpr);
 			if (parts.length === 0 && w > 1 && h > 1) {
 				const n = Math.round(Math.min(170, Math.max(40, (w * h) / 3800)));
-				for (let i = 0; i < n; i++) parts.push({ x: rand() * w, y: rand() * h });
+				for (let i = 0; i < n; i++) {
+					parts.push({ x: rand() * w, y: rand() * h });
+					tone.push(Math.floor(rand() * 4));
+				}
 			} else if (W > 0 && H > 0) {
 				for (const p of parts) {
 					p.x *= w / W;
@@ -158,35 +164,29 @@ const { class: className = '', angle = 90, label = 'Magnetic particles · Live s
 			return B;
 		}
 
+		const chained = new Uint8Array(4096);
+
 		function draw(B: number) {
 			const c = ctx!;
+			const dark = document.documentElement.classList.contains('dark');
+			const pal = dark ? DARK : LIGHT;
 			c.setTransform(1, 0, 0, 1, 0, 0);
 			c.clearRect(0, 0, canvas.width, canvas.height);
 			c.setTransform(dpr, 0, 0, dpr, 0, 0);
+			c.lineCap = 'round';
 
-			// soft glows
-			const g1 = c.createRadialGradient(W * 0.78, H * 0.3, 0, W * 0.78, H * 0.3, Math.max(W, H) * 0.45);
-			g1.addColorStop(0, `rgba(160,213,203,${0.12 + 0.12 * B})`);
-			g1.addColorStop(1, 'rgba(160,213,203,0)');
-			c.fillStyle = g1;
-			c.fillRect(0, 0, W, H);
-			const g2 = c.createRadialGradient(W * 0.15, H * 0.8, 0, W * 0.15, H * 0.8, Math.max(W, H) * 0.35);
-			g2.addColorStop(0, `rgba(248,116,104,${0.06 + 0.1 * B})`);
-			g2.addColorStop(1, 'rgba(248,116,104,0)');
-			c.fillStyle = g2;
-			c.fillRect(0, 0, W, H);
-
-			// magnetic field lines
+			// magnetic field lines, drawn as dotted strands
 			if (B > 0.01) {
 				c.save();
-				c.strokeStyle = `rgba(160,213,203,${0.15 * B})`;
-				c.lineWidth = 1;
-				c.setLineDash([3, 7]);
-				c.lineDashOffset = -t * 30;
+				c.strokeStyle = pal[1];
+				c.globalAlpha = 0.45 * B;
+				c.lineWidth = 1.8;
+				c.setLineDash([0, 11]);
+				c.lineDashOffset = -t * 18;
 				const L = Math.hypot(W, H);
 				const nx = -by;
 				const ny = bx;
-				for (let s = -L / 2; s <= L / 2; s += 56) {
+				for (let s = -L / 2; s <= L / 2; s += 64) {
 					const cx = W / 2 + nx * s;
 					const cy = H / 2 + ny * s;
 					c.beginPath();
@@ -197,39 +197,53 @@ const { class: className = '', angle = 90, label = 'Magnetic particles · Live s
 				c.restore();
 			}
 
-			// chain bonds between neighbours aligned with the field
+			// chain links: extra dots between field-aligned neighbours, so chains read as dotted lines
+			const N = parts.length;
+			chained.fill(0, 0, N);
 			if (B > 0.05) {
 				c.save();
-				c.lineCap = 'round';
-				c.lineWidth = 2.2;
-				c.strokeStyle = `rgba(248,116,104,${0.55 * B})`;
-				c.beginPath();
-				for (let i = 0; i < parts.length; i++) {
-					for (let j = i + 1; j < parts.length; j++) {
+				c.fillStyle = pal[4];
+				c.globalAlpha = 0.9 * B;
+				for (let i = 0; i < N; i++) {
+					for (let j = i + 1; j < N; j++) {
 						const dx = parts[j].x - parts[i].x;
 						const dy = parts[j].y - parts[i].y;
 						const r2 = dx * dx + dy * dy;
 						if (r2 > (2.6 * A) ** 2) continue;
-						const along = Math.abs(dx * bx + dy * by);
-						if (along > Math.sqrt(r2) * 0.8) {
-							c.moveTo(parts[i].x, parts[i].y);
-							c.lineTo(parts[j].x, parts[j].y);
+						if (Math.abs(dx * bx + dy * by) > Math.sqrt(r2) * 0.8) {
+							chained[i] = chained[j] = 1;
+							c.beginPath();
+							c.arc(parts[i].x + dx / 2, parts[i].y + dy / 2, DOT * 0.75, 0, Math.PI * 2);
+							c.fill();
 						}
 					}
 				}
-				c.stroke();
 				c.restore();
 			}
 
-			// particles
-			for (const p of parts) {
-				const grad = c.createRadialGradient(p.x - A * 0.35, p.y - A * 0.4, A * 0.1, p.x, p.y, A);
-				grad.addColorStop(0, '#f5fffe');
-				grad.addColorStop(0.45, B > 0.5 ? '#c3f3e2' : MINT);
-				grad.addColorStop(1, '#1f5b50');
-				c.fillStyle = grad;
+			// particles: flat dots in shades of green, deepening when they join a chain
+			for (let i = 0; i < N; i++) {
+				const p = parts[i];
+				c.fillStyle = chained[i] && B > 0.3 ? pal[4] : pal[tone[i]];
 				c.beginPath();
-				c.arc(p.x, p.y, A, 0, Math.PI * 2);
+				c.arc(p.x, p.y, DOT, 0, Math.PI * 2);
+				c.fill();
+			}
+
+			// coral dotted ring following one tracer particle
+			const tr = parts[0];
+			if (tr) {
+				c.fillStyle = CORAL;
+				const R = 20;
+				const n = 22;
+				for (let k = 0; k < n; k++) {
+					const a = (k / n) * Math.PI * 2 + t * 0.4;
+					c.beginPath();
+					c.arc(tr.x + R * Math.cos(a), tr.y + R * Math.sin(a), 1.5, 0, Math.PI * 2);
+					c.fill();
+				}
+				c.beginPath();
+				c.arc(tr.x, tr.y, DOT, 0, Math.PI * 2);
 				c.fill();
 			}
 		}
