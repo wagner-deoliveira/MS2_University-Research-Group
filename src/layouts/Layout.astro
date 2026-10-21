@@ -53,6 +53,15 @@ const { title, description = "Magnetic Soft Matter Group" } = Astro.props;
 	</head>
 	<body>
 		<slot />
+		<script>
+			// Cache the static assets (and the portraits used by the animations) so a
+			// second visit does not download them again.
+			if ('serviceWorker' in navigator && import.meta.env.PROD) {
+				window.addEventListener('load', () => {
+					navigator.serviceWorker.register('/sw.js').catch(() => {});
+				});
+			}
+		</script>
 		<script is:inline>
 			(() => {
 				const items = document.querySelectorAll('.reveal');

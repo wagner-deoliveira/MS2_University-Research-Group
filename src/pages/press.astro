@@ -4,6 +4,43 @@ import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import { pressData } from '@/data/press';
 import PageHero from '@/components/PageHero.astro';
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+const formatDate = (date?: string, year?: string) => {
+	if (!date) return year ?? '';
+	const [y, m, d] = date.split('-');
+	return `${Number(d)} ${MONTHS[Number(m) - 1]} ${y}`;
+};
+
+const OUTLETS: Record<string, string> = {
+	'canal.ugr.es': 'Canal UGR',
+	'ideal.es': 'Ideal',
+	'canalsur.es': 'Canal Sur',
+	'linkedin.com': 'LinkedIn',
+};
+
+const outletOf = (href?: string) => {
+	if (!href) return 'UGR';
+	try {
+		const host = new URL(href).hostname.replace(/^www\./, '');
+		return OUTLETS[host] ?? host;
+	} catch {
+		return 'UGR';
+	}
+};
+
+const wire = pressData.flatMap((group) =>
+	group.items.map((item) => ({
+		title: item.title,
+		date: formatDate(item.date, group.year),
+		outlet: outletOf(item.links[0]?.href),
+		href: item.links[0]?.href,
+	}))
+);
+
+const years = pressData.map((g) => g.year);
+const outlets = new Set(wire.filter((w) => w.outlet !== 'UGR').map((w) => w.outlet));
 ---
 
 <Layout title="Press and Media - Magnetic Soft Matter Group">
@@ -14,7 +51,12 @@ import PageHero from '@/components/PageHero.astro';
       title="Press and"
       highlight="Media"
       subtitle="News and media coverage of our research."
-      animation={0}
+      press={wire}
+      stats={[
+        { value: String(wire.length), label: 'Headlines' },
+        { value: `${years[years.length - 1]}–${years[0]}`, label: 'Coverage' },
+        { value: String(outlets.size), label: 'Outlets' },
+      ]}
     />
 
     <section class="container mx-auto px-4 py-24">

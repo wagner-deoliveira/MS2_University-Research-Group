@@ -1,8 +1,21 @@
 ---
+import { Image, type ImageMetadata } from 'astro:assets';
 import Layout from '@/layouts/Layout.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import PageHero from '@/components/PageHero.astro';
+
+import juanLeader from '@/assets/people/juan_leader.webp';
+import fernando from '@/assets/people/fernando.webp';
+import stefania from '@/assets/people/stefania.webp';
+import josem from '@/assets/people/josem.webp';
+import oscar from '@/assets/people/oscar.webp';
+import guillhermo from '@/assets/people/guillhermo.webp';
+import jesusgg from '@/assets/people/jesusgg.webp';
+import ariannab from '@/assets/people/ariannab.webp';
+import eliocinar from '@/assets/people/eliocinar.webp';
+import carlosrpl from '@/assets/people/carlosrpl.webp';
+import federicac from '@/assets/people/federicac.webp';
 
 const leader = {
   name: "Prof. Juan de Vicente",
@@ -10,7 +23,7 @@ const leader = {
   description: "Fluid Physics, Rheology, Tribology, Non-Newtonian Fluids, Magnetic Colloids, Nanoscience, Magnetorheology, Soft Matter",
   email: "jvicente@ugr.es",
   website: "https://www.ugr.es/~jvicente/",
-  image: "/assets/images/people/cards/juan_leader.jpg"
+  image: juanLeader
 };
 
 const permanentStaff = [
@@ -19,14 +32,14 @@ const permanentStaff = [
     role: "Associate Professor",
     description: "Magnetic particles, Magnetorheology, Colloid and Interfaces, Particle Engineering",
     email: "fvereda@ugr.es",
-    image: "/assets/images/people/cards/fernando.png"
+    image: fernando
   },
   {
     name: "Stefania Nardecchia",
     role: "Associate Professor",
     description: "Bio-based Polymers, Multi-Functional Biomaterials, 3D Scaffolding Systems, Stimuli-Responsive Actuation, In vitro Biocompatibility, 3D Cell Culture",
     email: "stefania@ugr.es",
-    image: "/assets/images/people/cards/stefania.png",
+    image: stefania,
     imagePosition: "30%"
   },
   {
@@ -34,7 +47,7 @@ const permanentStaff = [
     role: "Associate Professor",
     description: "Numerical and Experimental Investigation of Magnetorheological Fluids and Ferrofluids",
     email: "jmorillas@ugr.es",
-    image: "/assets/images/people/cards/josem.png"
+    image: josem
   }
 ];
 
@@ -44,7 +57,7 @@ const researchStaff = [
     role: "Postdoctoral Research Associate",
     description: "Additive Manufacturing, System Prototyping for Magnetic Control",
     email: "omcano@ugr.es",
-    image: "/assets/images/people/cards/oscar.png"
+    image: oscar
   },
   {
     name: "Guillermo Camacho Villar",
@@ -52,14 +65,14 @@ const researchStaff = [
     description: "Directed Self-assembly under Non-stationary Magnetic Fields",
     email: "guillermocamacho@ugr.es",
     website: "https://www.ugr.es/~guillermocamacho/",
-    image: "/assets/images/people/cards/guillhermo.png"
+    image: guillhermo
   },
   {
     name: "Jesús García Gutiérrez",
     role: "PhD Candidate",
     description: "Bioinspired Self-Healing Hydrogels for Tissue Repair and Therapeutic Applications",
     email: "jesusjgg@ugr.es",
-    image: "/assets/images/people/cards/jesusgg.jpg",
+    image: jesusgg,
     imagePosition: "50%"
   },
   {
@@ -67,14 +80,14 @@ const researchStaff = [
     role: "MSCA PhD Candidate",
     description: "Tuning Model Colloidal Gels by External Magnetic Fields: Applications in Tissue Engineering. Magnetically Actuated Tissue Engineered Scaffolds",
     email: "aribart@ugr.es",
-    image: "/assets/images/people/cards/ariannab.jpg"
+    image: ariannab
   },
   {
     name: "Elio Cinar San Segundo",
     role: "MSCA PhD Candidate",
     description: "Magnetic Biomaterials applied to Tissue Engineering",
     email: "eliocss@ugr.es",
-    image: "/assets/images/people/cards/eliocinar.jpg",
+    image: eliocinar,
     imagePosition: "25%"
   },
   {
@@ -82,7 +95,7 @@ const researchStaff = [
     role: "PhD Candidate",
     description: "Restoration of aquatic ecosystems by means of magnetic nanoparticles",
     email: "pelegrina@ugr.es",
-    image: "/assets/images/people/cards/carlosrpl.jpg",
+    image: carlosrpl,
     imagePosition: "25%"
   },
   {
@@ -90,7 +103,7 @@ const researchStaff = [
     role: "MSCA PhD Candidate",
     description: "Tuning Model Colloidal Gels by External Magnetic Fields: Applications in Cancer Treatment",
     email: "fe.castellone@nanogetic.es",
-    image: "/assets/images/people/cards/federicac.jpg",
+    image: federicac,
     imagePosition: "25%"
   }
 ];
@@ -110,9 +123,9 @@ const team = [
   ...researchStaff.map((m) => ({ ...m, label: shortRole(m.role), initials: '' })),
   ...students.map((s) => {
     const [name, role] = s.split('. ');
-    return { name, role, label: role, description: '', email: '', image: '', initials: name.split(' ').map((w) => w[0]).slice(0, 2).join('') };
+    return { name, role, label: role, description: '', email: '', image: undefined, initials: name.split(' ').map((w) => w[0]).slice(0, 2).join('') };
   }),
-] as Array<{ name: string; role: string; label: string; description: string; email: string; website?: string; image: string; imagePosition?: string; initials: string }>;
+] as Array<{ name: string; role: string; label: string; description: string; email: string; website?: string; image?: ImageMetadata; imagePosition?: string; initials: string }>;
 
 const formerMembers = [
   {
@@ -268,7 +281,7 @@ const formerMembers = [
                 <div class="member group relative">
                   <button type="button" class="member-toggle relative z-30 w-full cursor-pointer rounded-3xl text-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600" aria-expanded="false">
                     <span class="relative mx-auto block w-fit">
-                      <img src={m.image} alt="" loading="lazy" class="h-32 w-32 rounded-full bg-ink-100 object-cover shadow-sm transition duration-500 group-hover:scale-[1.03] sm:h-40 sm:w-40" style={`object-position: center ${m.imagePosition ?? 'top'}`} />
+                      <Image src={m.image!} alt="" width={320} height={Math.round((m.image!.height / m.image!.width) * 320)} widths={[160, 320]} sizes="160px" loading="lazy" decoding="async" class="h-32 w-32 rounded-full bg-ink-100 object-cover shadow-sm transition duration-500 group-hover:scale-[1.03] sm:h-40 sm:w-40" style={`object-position: center ${m.imagePosition ?? 'top'}`} />
                       <span class="member-badge absolute bottom-1 right-1 flex h-8 w-8 items-center justify-center rounded-full bg-brand-600 text-white shadow-sm transition duration-300 group-hover:scale-110" aria-hidden="true">
                         <svg viewBox="0 0 24 24" class="member-plus h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>
                         <svg viewBox="0 0 24 24" class="member-close absolute h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>

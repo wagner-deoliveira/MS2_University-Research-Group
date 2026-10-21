@@ -6,8 +6,13 @@ import Eyebrow from '@/components/Eyebrow.astro';
 import ArrowButton from '@/components/ArrowButton.astro';
 import RheologyAnimation from '@/components/RheologyAnimation.astro';
 import { pressData } from '@/data/press';
-
-const img = (name: string, directory: 'index' | 'about' = 'index') => `/assets/images/${directory}/${encodeURIComponent(name)}`;
+import { Image } from 'astro:assets';
+import heroPhoto from '@/assets/images/index/F2N2_2025_3.webp';
+import labPhoto from '@/assets/images/index/F2N2 (90).webp';
+import teamPhoto from '@/assets/images/index/F2N2 (24).webp';
+import researchersPhoto from '@/assets/images/index/F2N2 (93).webp';
+import setupPhoto from '@/assets/images/index/F2N2 (77).webp';
+import equipmentPhoto from '@/assets/images/about/F2N2 (12).webp';
 const disciplines = ['Physics', 'Chemistry', 'Biology', 'Biotechnology', 'Chemical engineering', 'Industrial engineering', 'Telecommunication engineering'];
 const methods = ['Rheomicroscopy', 'Molecular dynamics', 'Finite element method', 'Triaxial magnetic fields'];
 
@@ -85,7 +90,18 @@ const formatDate = (d: string, year: string) =>
 		<!-- Full-bleed media -->
 		<section class="relative overflow-hidden" aria-label="Our team">
 			<div class="aspect-[3/2] w-full overflow-hidden md:aspect-[2/1]">
-				<img src={img('F2N2_2025_3.jpg')} alt="Group members in the F2N2 laboratory" class="slow-zoom h-full w-full object-cover object-[center_20%]" />
+				<Image
+					src={heroPhoto}
+					alt="Group members in the F2N2 laboratory"
+					width={1536}
+					height={1020}
+					widths={[640, 1024, 1536, 1920, 2560]}
+					sizes="100vw"
+						loading="eager"
+					fetchpriority="high"
+					decoding="async"
+					class="slow-zoom h-full w-full object-cover object-[center_20%]"
+				/>
 			</div>
 		</section>
 
@@ -134,7 +150,17 @@ const formatDate = (d: string, year: string) =>
 				<div class="mt-20 grid gap-12 lg:grid-cols-12">
 					<div class="reveal lg:col-span-5 lg:col-start-2">
 						<div class="sticky top-28 overflow-hidden rounded-[2rem]">
-							<img src={img('F2N2 (90).jpg')} alt="Research in the F2N2 laboratory" class="aspect-[4/5] w-full object-cover" />
+							<Image
+								src={labPhoto}
+								alt="Research in the F2N2 laboratory"
+								width={960}
+								height={640}
+								widths={[480, 768, 960, 1440]}
+								sizes="(min-width: 1024px) 560px, 100vw"
+								loading="lazy"
+								decoding="async"
+								class="aspect-[4/5] w-full object-cover"
+							/>
 						</div>
 					</div>
 					<ol class="lg:col-span-5 lg:col-start-7">
@@ -180,12 +206,52 @@ const formatDate = (d: string, year: string) =>
 				<div class="reveal lg:col-span-6">
 					<div class="grid grid-cols-5 gap-4">
 						<div class="col-span-3 flex flex-col gap-4">
-							<img src={img('F2N2 (12).jpg', 'about')} alt="Rheomicroscopy equipment in the laboratory" class="aspect-[3/4] w-full rounded-[2rem] object-cover" />
-							<img src={img('F2N2 (24).jpg')} alt="Members of the Magnetic Soft Matter Group" class="aspect-[2/1] w-full rounded-[1.5rem] object-cover" />
+							<Image
+									src={equipmentPhoto}
+									alt="Rheomicroscopy equipment in the laboratory"
+									width={640}
+									height={427}
+									widths={[320, 480, 640, 960]}
+									sizes="(min-width: 1024px) 400px, 60vw"
+										loading="lazy"
+									decoding="async"
+									class="aspect-[3/4] w-full rounded-[2rem] object-cover"
+								/>
+							<Image
+									src={teamPhoto}
+									alt="Members of the Magnetic Soft Matter Group"
+									width={640}
+									height={427}
+									widths={[320, 480, 640, 960]}
+									sizes="(min-width: 1024px) 400px, 60vw"
+										loading="lazy"
+									decoding="async"
+									class="aspect-[2/1] w-full rounded-[1.5rem] object-cover"
+								/>
 						</div>
 						<div class="col-span-2 flex flex-col gap-4 pt-16">
-							<img src={img('F2N2 (93).jpg')} alt="Researchers at work" class="aspect-square w-full rounded-[1.5rem] object-cover" />
-							<img src={img('F2N2 (77).jpg')} alt="Experimental setup in the lab" class="aspect-[3/4] w-full rounded-[1.5rem] object-cover" />
+							<Image
+									src={researchersPhoto}
+									alt="Researchers at work"
+									width={480}
+									height={320}
+									widths={[240, 360, 480]}
+									sizes="(min-width: 1024px) 280px, 40vw"
+										loading="lazy"
+									decoding="async"
+									class="aspect-square w-full rounded-[1.5rem] object-cover"
+								/>
+							<Image
+									src={setupPhoto}
+									alt="Experimental setup in the lab"
+									width={480}
+									height={320}
+									widths={[240, 360, 480]}
+									sizes="(min-width: 1024px) 280px, 40vw"
+										loading="lazy"
+									decoding="async"
+									class="aspect-[3/4] w-full rounded-[1.5rem] object-cover"
+								/>
 						</div>
 					</div>
 				</div>

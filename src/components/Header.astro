@@ -1,6 +1,8 @@
 ---
 import { ModeToggle } from './ModeToggle';
 import { MobileNav } from './MobileNav';
+import { Image } from 'astro:assets';
+import groupLogo from '@/assets/images/logo/LOGOMSMGroup_cropped.png';
 
 const navItems = [
   { name: 'Home', href: '/' },
@@ -34,7 +36,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     </div>
 
     <a href="/" class="flex items-center justify-center" aria-label="Magnetic Soft Matter Group – Home">
-      <img src="/assets/images/logo/LOGOMSMGroup_cropped.png" alt="Magnetic Soft Matter Group" class="h-11 w-auto dark:invert" />
+      <Image src={groupLogo} alt="Magnetic Soft Matter Group" width={128} height={129} widths={[64, 128, 256]} sizes="44px" decoding="async" class="h-11 w-auto dark:invert" />
     </a>
 
     <div class="flex items-center justify-end gap-3">

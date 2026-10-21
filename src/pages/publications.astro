@@ -4,34 +4,52 @@ import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import { publicationYears } from '@/data/publications';
 import PageHero from '@/components/PageHero.astro';
+import { Image } from 'astro:assets';
+import acsnanoCover from '@/assets/images/publications/acsnano_cover.webp';
+import jorCoverTerkel from '@/assets/images/publications/jor_cover_terkel.webp';
+import softMatterCover from '@/assets/images/publications/back_cover_morillas.webp';
+import jorCoverMorillas from '@/assets/images/publications/jor_cover_morillas.webp';
+import bookCoverDevicente from '@/assets/images/publications/book_cover_devicente.webp';
 
 const covers = [
   {
     link: "https://doi.org/10.1021/acsnano.5c09450",
-    image: "/assets/images/publications/acsnano_cover.jpg",
-    alt: "ACS Nano Cover"
+    image: acsnanoCover,
+    alt: "ACS Nano Cover",
+    width: 480,
+    height: 638
   },
   {
     link: "https://doi.org/10.1122/8.0000646",
-    image: "/assets/images/publications/jor_cover_terkel.jpeg",
-    alt: "Journal of Rheology Cover"
+    image: jorCoverTerkel,
+    alt: "Journal of Rheology Cover",
+    width: 480,
+    height: 635
   },
   {
     link: "https://doi.org/10.1039/D0SM01082K",
-    image: "/assets/images/publications/back_cover_morillas.jpg",
-    alt: "Soft Matter Cover"
+    image: softMatterCover,
+    alt: "Soft Matter Cover",
+    width: 480,
+    height: 629
   },
   {
     link: "https://doi.org/10.1122/1.5093628",
-    image: "/assets/images/publications/jor_cover_morillas.jpeg",
-    alt: "Journal of Rheology Cover"
+    image: jorCoverMorillas,
+    alt: "Journal of Rheology Cover",
+    width: 480,
+    height: 640
   },
   {
     link: "https://doi.org/10.1039/9781839169755",
-    image: "/assets/images/publications/book_cover_devicente.png",
-    alt: "Book Cover"
+    image: bookCoverDevicente,
+    alt: "Book Cover",
+    width: 480,
+    height: 635
   }
 ];
+
+const coverSizes = "(min-width: 1024px) 240px, (min-width: 768px) 30vw, 45vw";
 ---
 
 <Layout title="Publications - Magnetic Soft Matter Group">
@@ -54,7 +72,17 @@ const covers = [
       <div class="mt-14 grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-5">
         {covers.map(cover => (
           <a href={cover.link} target="_blank" rel="noopener" class="group block overflow-hidden rounded-2xl border bg-card p-2 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-            <img src={cover.image} alt={cover.alt} class="h-auto w-full rounded-xl object-contain" loading="lazy" />
+            <Image
+              src={cover.image}
+              alt={cover.alt}
+              width={cover.width}
+              height={cover.height}
+              widths={[240, 360, 480]}
+              sizes={coverSizes}
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded-xl object-contain"
+            />
           </a>
         ))}
       </div>

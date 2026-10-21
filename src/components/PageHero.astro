@@ -3,6 +3,7 @@ import Eyebrow from '@/components/Eyebrow.astro';
 import ParticleField from '@/components/ParticleField.astro';
 import LabIllustration from '@/components/LabIllustration.astro';
 import TeamNetwork, { type TeamNode } from '@/components/TeamNetwork.astro';
+import PressWire, { type PressItem } from '@/components/PressWire.astro';
 
 interface Props {
 	eyebrow: string;
@@ -17,10 +18,12 @@ interface Props {
 	illustration?: boolean;
 	/** Replace the banner image with the animated orbiting team network. */
 	team?: TeamNode[];
+	/** Replace the banner image with the animated newsroom wire of press coverage. */
+	press?: PressItem[];
 	stats?: { value: string; label: string }[];
 }
 
-const { eyebrow, title, highlight, subtitle, image, animation, animationLabel, illustration, team, stats } = Astro.props;
+const { eyebrow, title, highlight, subtitle, image, animation, animationLabel, illustration, team, press, stats } = Astro.props;
 const src = image?.split('/').map((p, i, a) => (i === a.length - 1 ? encodeURIComponent(p) : p)).join('/');
 ---
 
@@ -28,6 +31,8 @@ const src = image?.split('/').map((p, i, a) => (i === a.length - 1 ? encodeURICo
 	<div class="grid border-b border-border lg:min-h-[78vh] lg:grid-cols-2">
 		{team && team.length > 0 ? (
 			<TeamNetwork members={team} class="h-[46vh] min-h-[320px] lg:h-auto" />
+		) : press && press.length > 0 ? (
+			<PressWire items={press} class="h-[46vh] min-h-[320px] lg:h-auto" />
 		) : illustration ? (
 			<LabIllustration class="h-[46vh] min-h-[320px] lg:h-auto" />
 		) : animation !== undefined ? (

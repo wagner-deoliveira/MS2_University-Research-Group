@@ -1,7 +1,9 @@
 ---
+import { Image, type ImageMetadata } from 'astro:assets';
+
 export interface TeamNode {
 	name: string;
-	image?: string;
+	image?: ImageMetadata;
 	imagePosition?: string;
 	initials?: string;
 	/** 0 = centre (group leader), 1 = inner orbit, 2 = middle orbit, 3 = outer orbit */
@@ -19,11 +21,17 @@ const { class: className = '', members, label = 'F2N2Lab · Team network' } = As
 // Orbit radii and portrait diameters, in % of the square stage
 const RADIUS = [0, 23, 36, 46.5];
 const SIZE = [21, 12.5, 10, 6.5];
+// rendered size of each portrait, used to pick the right image resolution
+const PORTRAIT_SIZE = ['130px', '80px', '64px', '48px'];
+// largest resolution actually needed for each ring
+const PORTRAIT_WIDTH = [260, 128, 128, 64];
 
 const counts = [0, 1, 2, 3].map((r) => members.filter((m) => m.ring === r).length);
 const nodes = members.map((m) => {
 	const index = members.filter((o) => o.ring === m.ring).indexOf(m);
-	return { ...m, index, count: counts[m.ring] };
+	const width = PORTRAIT_WIDTH[m.ring];
+	const height = m.image ? Math.round((m.image.height / m.image.width) * width) : width;
+	return { ...m, index, count: counts[m.ring], width, height };
 });
 const links = nodes.filter((n) => n.ring > 0);
 ---
@@ -58,7 +66,19 @@ const links = nodes.filter((n) => n.ring > 0);
 				title={n.name}
 			>
 				{n.image ? (
-					<img src={n.image} alt="" loading="lazy" class="h-full w-full rounded-full bg-ink-100 object-cover" style={`object-position: center ${n.imagePosition ?? 'top'}`} />
+					<Image
+						src={n.image}
+						alt=""
+						width={n.width}
+						height={n.height}
+						widths={n.ring === 0 ? [130, 260] : [64, 128, 256]}
+						sizes={PORTRAIT_SIZE[n.ring]}
+						loading={n.ring === 0 ? 'eager' : 'lazy'}
+						fetchpriority={n.ring === 0 ? 'high' : 'auto'}
+						decoding="async"
+						class="h-full w-full rounded-full bg-ink-100 object-cover"
+						style={`object-position: center ${n.imagePosition ?? 'top'}`}
+					/>
 				) : (
 					<span class="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-mint-200 to-mint-400 font-display font-medium text-ink-950 initials">{n.initials}</span>
 				)}
