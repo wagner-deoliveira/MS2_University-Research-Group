@@ -1,0 +1,151 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import PageHero from '@/components/PageHero.astro';
+
+const currentGrants = [
+  {
+    title: "Controlling Colloidal Gels for Novel Sustainable Materials (CoCoGel)",
+    funder: "Call HORIZON-MSCA-2022-DN-01, Type of action HORIZON-TMA-MSCA-DN-ID, EU, Grant 101120301. EU.",
+    details: "End time: December 2027. 3,471,588.00 Euros. PI: G. Petekidis (J. de Vicente at UGR).",
+    link: "https://cordis.europa.eu/project/id/101120301"
+  },
+  {
+    title: "Architecture Function and Dynamics in Life Sciences a European Doctoral Programme (Archifun)",
+    funder: "Call HORIZON-MSCA-2022-COFUND-01, EU, Grant 101126656",
+    details: "End time: June 2029. 2,419,200.00 Euros.",
+    link: "https://doi.org/10.3030/101126656"
+  },
+  {
+    title: "Functional Magnetic Scaffolds for Tissue Engineering (PID2022-138990NB-I00)",
+    funder: "Ministerio de Ciencia e Innovación. Spain.",
+    details: "End time: August 2026. 187,500.00 Euros. PIs: S. Nardecchia and J. de Vicente."
+  }
+];
+
+const pastGrants = [
+  {
+    title: "Optimización en Laboratorio y Evaluación In-situ del uso de Nanomateriales Magnéticos para la Remediación Ambiental en un Humedal Mediterráneo (TED2021-129384B-C22)",
+    funder: "Ministerio de Ciencia e Innovación. Spain.",
+    details: "End time: September 2025. 148,350.00 Euros. PI: J. de Vicente."
+  },
+  {
+    title: "Suspensiones Capilares Magnéticas: Diseño y Propiedades Mecánicas (C‐EXP‐262‐UGR23)",
+    funder: "University of Granada. Spain.",
+    details: "End time: November 2024. PI: Juan de Vicente, Inmaculada de Vicente."
+  },
+  {
+    title: "Multi-Axial Magnetic Field RHEology (MAMFRHE)",
+    funder: "(EF-ST-H2020-MSCA-IF-2020, EU, Grant 101030666). EU.",
+    details: "End time: September 2024. 245,732.16 Euros. PI: J.R. Morillas and J. de Vicente.",
+    link: "https://cordis.europa.eu/project/id/101030666"
+  },
+  {
+    title: "Magnetic Multiaxial Microrheology of Anisotropic Living Materials (3M-LIVMAT)",
+    funder: "Plan Propio de Investigación y Trasferencia de la Universidad de Granada (Spain).",
+    details: "End time: December 2023. 1,000.00 Euros. PIs: S. Nardecchia and J. A. Ruiz-Lopez."
+  },
+  {
+    title: "Diseño, construcción y validación de un caudalímetro basado en galgas extensiométricas para suspensiones de sílice en sistemas microfluídicos",
+    funder: "Plan Propio de Investigación y Trasferencia de la Universidad de Granada (Spain).",
+    details: "End time: December 2023. 1,000.00 Euros. PIs: A. Barroso and J. R. Morillas."
+  },
+  {
+    title: "Desarrollo de Estructuras Multifuncionales mediante Electrohilado de Fluidos Magneto-reológicos",
+    funder: "(FEDER, A-FQM-396-UGR20). Fondo Europeo de Desarrollo Regional (FEDER) Junta de Andalucia (Spain).",
+    details: "End time: June 2023. 60,000.00 Euros. PI: J. de Vicente."
+  },
+  {
+    title: "Autoensamblado y Propiedades Reológicas de Coloides Magnéticos en Campos no Estacionarios",
+    funder: "(PID2019-104883GB-I00). Ministerio de Ciencia e Innovación. Spain.",
+    details: "End time: May 2023. 139,150.00 Euros. PI: J. de Vicente."
+  },
+  {
+    title: "Magneto-reología en Campos Triaxiales no Estacionarios",
+    funder: "(P18-FR-2465). Consejería de Economía, Conocimiento, Empresas y Universidad (Junta de Andalucía, Spain)",
+    details: "End time: December 2022. 94,800 Euros. PI: J. de Vicente."
+  },
+  {
+    title: "Flow-Induced Layer Formation in Dipolar Non-brownian Fluids",
+    funder: "(E200700433). EUSMI - European Soft Matter Infrastructure.",
+    details: "End time: December 2021. PI: G. Petekidis and J. de Vicente."
+  },
+  {
+    title: "Reomicroscopio Confocal de Alta Velocidad",
+    funder: "(EQC2019-005529-P). Adquisición de equipamiento científico-técnico del subprograma estatal de infraestructuras de investigación y equipamiento científico-técnico (Plan Estatal I+D+I 2017-2020) (Spain).",
+    details: "End time: December 2021. 522,404.55 Euros. PI: J. de Vicente."
+  },
+  {
+    title: "Structure and Dynamics in Active Glass-forming Liquids (ARIADNE)",
+    funder: "(EF-ST-H2020-MSCA-IF-2018, EU, Grant 840195). EU.",
+    details: "End time: May 2021. 160,932.48 Euros. PI: S. Roldán-Vargas and J. de Vicente.",
+    link: "https://cordis.europa.eu/project/id/840195"
+  },
+  {
+    title: "Triaxial Magnetic Fields for the Control of Bioactive Materials in Bone Engineering (Matrix-B)",
+    funder: "(EF-ST-H2020-MSCA-IF-2017, EU, Grant 795318). EU.",
+    details: "End time: August 2020. 170,121.6 Euros. PI: S. Nardecchia and J. de Vicente.",
+    link: "https://cordis.europa.eu/project/id/795318"
+  }
+];
+---
+
+<Layout title="Our Projects - Magnetic Soft Matter Group">
+  <Header />
+  <main class="bg-background text-foreground">
+    <PageHero
+      eyebrow="Funding & projects"
+      title="Our"
+      highlight="Projects"
+      subtitle="European, national and regional grants that power our research on magnetic soft matter."
+      animation={90}
+      stats={[
+        { value: String(currentGrants.length), label: 'Active grants' },
+        { value: String(pastGrants.length), label: 'Completed grants' },
+        { value: String([...currentGrants, ...pastGrants].filter(g => g.funder.includes('EU')).length), label: 'EU-funded projects' },
+      ]}
+    />
+
+    <section class="container mx-auto px-4 py-24">
+      <p class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-600 dark:text-brand-400">Ongoing</p>
+      <h2 class="mt-3 text-3xl font-bold tracking-tight md:text-5xl">Current grants</h2>
+      <div class="mt-12 grid gap-6 lg:grid-cols-3">
+        {currentGrants.map(grant => (
+          <article class="group flex flex-col rounded-2xl border bg-card p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+            <span class="w-fit rounded-full bg-gradient-to-r from-brand-500 to-mint-400 px-3 py-1 text-xs font-semibold text-white">Active</span>
+            <h3 class="mt-5 text-lg font-semibold leading-snug">{grant.title}</h3>
+            <p class="mt-3 text-sm italic text-muted-foreground">{grant.funder}</p>
+            <p class="mt-3 text-sm text-muted-foreground">{grant.details}</p>
+            {grant.link && (
+              <a href={grant.link} target="_blank" rel="noopener" class="mt-auto pt-6 text-sm font-semibold text-brand-600 hover:underline dark:text-brand-400">Learn more →</a>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="bg-muted/50 py-24">
+      <div class="container mx-auto px-4">
+        <div class="mx-auto max-w-2xl text-center">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-600 dark:text-brand-400">Track record</p>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight md:text-5xl">Past grants</h2>
+        </div>
+        <ol class="relative mx-auto mt-16 max-w-4xl space-y-6 border-l border-brand-200 pl-8 dark:border-brand-900">
+          {pastGrants.map(grant => (
+            <li class="relative rounded-2xl border bg-card p-6 shadow-sm">
+              <span class="absolute -left-[2.55rem] top-7 h-3.5 w-3.5 rounded-full bg-gradient-to-br from-brand-500 to-mint-400 ring-4 ring-background"></span>
+              <h3 class="font-semibold leading-snug">{grant.title}</h3>
+              <p class="mt-2 text-sm italic text-muted-foreground">{grant.funder}</p>
+              <p class="mt-2 text-sm text-muted-foreground">{grant.details}</p>
+              {grant.link && (
+                <a href={grant.link} target="_blank" rel="noopener" class="mt-3 inline-block text-sm font-semibold text-brand-600 hover:underline dark:text-brand-400">Learn more →</a>
+              )}
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>

@@ -1,0 +1,247 @@
+---
+import { Image, type ImageMetadata } from 'astro:assets';
+
+export interface TeamNode {
+	name: string;
+	image?: ImageMetadata;
+	imagePosition?: string;
+	initials?: string;
+	/** 0 = centre (group leader), 1 = inner orbit, 2 = middle orbit, 3 = outer orbit */
+	ring: 0 | 1 | 2 | 3;
+}
+
+interface Props {
+	class?: string;
+	members: TeamNode[];
+	label?: string;
+}
+
+const { class: className = '', members, label = 'F2N2Lab · Team network' } = Astro.props;
+
+// Orbit radii and portrait diameters, in % of the square stage
+const RADIUS = [0, 23, 36, 46.5];
+const SIZE = [21, 12.5, 10, 6.5];
+// rendered size of each portrait, used to pick the right image resolution
+const PORTRAIT_SIZE = ['130px', '80px', '64px', '48px'];
+// largest resolution actually needed for each ring
+const PORTRAIT_WIDTH = [260, 128, 128, 64];
+
+const counts = [0, 1, 2, 3].map((r) => members.filter((m) => m.ring === r).length);
+const nodes = members.map((m) => {
+	const index = members.filter((o) => o.ring === m.ring).indexOf(m);
+	const width = PORTRAIT_WIDTH[m.ring];
+	const height = m.image ? Math.round((m.image.height / m.image.width) * width) : width;
+	return { ...m, index, count: counts[m.ring], width, height };
+});
+const links = nodes.filter((n) => n.ring > 0);
+---
+
+<div
+	class:list={['team-network relative overflow-hidden', className]}
+	role="img"
+	aria-label="Animated network of the team: the group leader at the centre, with staff, researchers and students orbiting around and linked by travelling signals"
+>
+	<div class="team-stage absolute left-1/2 top-1/2" data-radius={JSON.stringify(RADIUS)}>
+		<svg viewBox="0 0 100 100" class="absolute inset-0 h-full w-full overflow-visible" fill="none" aria-hidden="true">
+			{RADIUS.slice(1).map((r, i) => (
+				<circle class="orbit" style={`--d:${i * -7}s`} cx="50" cy="50" r={r} stroke="var(--color-mint-400)" stroke-width="0.35" stroke-linecap="round" stroke-dasharray={`0 ${1.6 + i * 0.3}`} />
+			))}
+			<circle class="halo" cx="50" cy="50" r={SIZE[0] / 2 + 2.6} stroke="var(--color-coral-400)" stroke-width="0.55" stroke-linecap="round" stroke-dasharray="0 1.9" />
+			{links.map((_, i) => (
+				<g data-link={i}>
+					<line stroke="var(--color-mint-400)" stroke-width="0.3" stroke-linecap="round" stroke-dasharray="0 1.1" />
+					<circle r="0.75" fill="var(--color-coral-400)" opacity="0" />
+				</g>
+			))}
+		</svg>
+
+		{nodes.map((n) => (
+			<span
+				class:list={['team-node absolute block rounded-full', n.ring === 0 && 'is-leader']}
+				style={`width:${SIZE[n.ring]}%; height:${SIZE[n.ring]}%; left:${50 + RADIUS[n.ring] * Math.cos((n.index / Math.max(1, n.count)) * Math.PI * 2)}%; top:${50 + RADIUS[n.ring] * Math.sin((n.index / Math.max(1, n.count)) * Math.PI * 2)}%`}
+				data-ring={n.ring}
+				data-index={n.index}
+				data-count={n.count}
+				data-name={n.name}
+				title={n.name}
+			>
+				{n.image ? (
+					<Image
+						src={n.image}
+						alt=""
+						width={n.width}
+						height={n.height}
+						widths={n.ring === 0 ? [130, 260] : [64, 128, 256]}
+						sizes={PORTRAIT_SIZE[n.ring]}
+						loading={n.ring === 0 ? 'eager' : 'lazy'}
+						fetchpriority={n.ring === 0 ? 'high' : 'auto'}
+						decoding="async"
+						class="h-full w-full rounded-full bg-ink-100 object-cover"
+						style={`object-position: center ${n.imagePosition ?? 'top'}`}
+					/>
+				) : (
+					<span class="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-mint-200 to-mint-400 font-display font-medium text-ink-950 initials">{n.initials}</span>
+				)}
+			</span>
+		))}
+	</div>
+
+	<div class="pointer-events-none absolute bottom-5 left-5 flex items-center gap-2 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground">
+		<span class="h-1.5 w-1.5 rounded-full bg-coral-400"></span>
+		<span>{label}</span>
+		<span class="text-border">/</span>
+		<span data-network-label>{members.length} members</span>
+	</div>
+</div>
+
+<style>
+	.team-network { container-type: size; }
+	.team-stage {
+		width: min(86cqw, 86cqh);
+		aspect-ratio: 1;
+		transform: translate(-50%, -50%);
+		container-type: inline-size;
+	}
+	.team-node {
+		transform: translate(-50%, -50%);
+		box-shadow: 0 0 0 0.45cqw var(--background), 0 8px 24px -12px rgb(0 0 0 / 0.35);
+		transition: scale 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s;
+		will-change: left, top;
+	}
+	.team-node:hover { scale: 1.18; z-index: 10; box-shadow: 0 0 0 0.45cqw var(--color-coral-400), 0 12px 30px -12px rgb(0 0 0 / 0.45); }
+	.team-node .initials { font-size: 2.3cqw; }
+	.team-node.is-leader::after {
+		content: '';
+		position: absolute;
+		inset: -0.45cqw;
+		border-radius: 9999px;
+		border: 0.35cqw solid var(--color-mint-400);
+		animation: ripple 3.6s ease-out infinite;
+		pointer-events: none;
+	}
+	@keyframes ripple {
+		0% { transform: scale(1); opacity: 0.8; }
+		100% { transform: scale(1.7); opacity: 0; }
+	}
+	.orbit, .halo { transform-origin: 50px 50px; }
+	.orbit { animation: drift 60s linear var(--d, 0s) infinite; opacity: 0.8; }
+	.halo { animation: drift 24s linear infinite reverse; }
+	@keyframes drift { to { transform: rotate(360deg); } }
+	[data-link] line { opacity: 0.75; transition: stroke 0.3s, opacity 0.3s; }
+	[data-link].is-active line { stroke: var(--color-coral-400); opacity: 1; }
+
+	@media (prefers-reduced-motion: reduce) {
+		.orbit, .halo, .team-node.is-leader::after { animation: none; }
+	}
+</style>
+
+<script>
+	type Node = { el: HTMLElement; ring: number; index: number; count: number; x: number; y: number };
+
+	const SPEED = [0, 0.045, -0.03, 0.02]; // orbital speed per ring (rad/s)
+	const OFFSET = [0, -Math.PI / 2, -Math.PI / 2 + 0.45, 0.3]; // starting angle per ring
+
+	function init(root: HTMLElement) {
+		const stage = root.querySelector<HTMLElement>('.team-stage');
+		if (!stage) return;
+		const RADIUS: number[] = JSON.parse(stage.dataset.radius ?? '[0,23,36,46.5]');
+		const label = root.querySelector<HTMLElement>('[data-network-label]');
+		const defaultLabel = label?.textContent ?? '';
+
+		const nodes: Node[] = [...stage.querySelectorAll<HTMLElement>('.team-node')].map((el) => ({
+			el,
+			ring: Number(el.dataset.ring),
+			index: Number(el.dataset.index),
+			count: Number(el.dataset.count),
+			x: 50,
+			y: 50,
+		}));
+		const children = nodes.filter((n) => n.ring > 0);
+		const links = [...stage.querySelectorAll<SVGGElement>('[data-link]')].map((g, i) => ({
+			g,
+			line: g.querySelector('line')!,
+			dot: g.querySelector('circle')!,
+			node: children[i],
+			parent: nodes[0],
+			phase: (i * 0.37) % 1,
+		}));
+
+		function layout(t: number) {
+			for (const n of nodes) {
+				if (n.ring === 0) continue;
+				const a = OFFSET[n.ring] + (n.index / n.count) * Math.PI * 2 + SPEED[n.ring] * t;
+				const r = RADIUS[n.ring] + 0.7 * Math.sin(t * 0.5 + n.index * 1.3 + n.ring);
+				n.x = 50 + r * Math.cos(a);
+				n.y = 50 + r * Math.sin(a);
+				n.el.style.left = `${n.x}%`;
+				n.el.style.top = `${n.y}%`;
+			}
+			for (const l of links) {
+				// connect each member to the nearest member of the next inner orbit (or the leader)
+				let best = nodes[0];
+				let bestD = Infinity;
+				for (const p of nodes) {
+					if (p.ring !== l.node.ring - 1) continue;
+					const d = (p.x - l.node.x) ** 2 + (p.y - l.node.y) ** 2;
+					if (d < bestD) {
+						bestD = d;
+						best = p;
+					}
+				}
+				l.parent = best;
+				l.line.setAttribute('x1', String(best.x));
+				l.line.setAttribute('y1', String(best.y));
+				l.line.setAttribute('x2', String(l.node.x));
+				l.line.setAttribute('y2', String(l.node.y));
+
+				// a coral signal travels outward along the link, then rests
+				const p = ((t * 0.22 + l.phase) % 1.8);
+				if (p < 1) {
+					const k = p * p * (3 - 2 * p);
+					l.dot.setAttribute('cx', String(best.x + (l.node.x - best.x) * k));
+					l.dot.setAttribute('cy', String(best.y + (l.node.y - best.y) * k));
+					l.dot.setAttribute('opacity', String(Math.sin(Math.PI * p)));
+				} else {
+					l.dot.setAttribute('opacity', '0');
+				}
+			}
+		}
+
+		// highlight a member's connections and show their name in the caption
+		for (const n of nodes) {
+			n.el.addEventListener('mouseenter', () => {
+				if (label) label.textContent = n.el.dataset.name ?? defaultLabel;
+				for (const l of links) l.g.classList.toggle('is-active', l.node === n || l.parent === n);
+			});
+			n.el.addEventListener('mouseleave', () => {
+				if (label) label.textContent = defaultLabel;
+				for (const l of links) l.g.classList.remove('is-active');
+			});
+		}
+
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+			layout(0);
+			return;
+		}
+
+		let visible = true;
+		new IntersectionObserver((entries) => {
+			visible = entries[0]?.isIntersecting ?? true;
+		}).observe(root);
+
+		let t = 0;
+		let last = performance.now();
+		const loop = (now: number) => {
+			const dt = Math.min(1 / 20, (now - last) / 1000);
+			last = now;
+			if (visible && !document.hidden) {
+				t += dt;
+				layout(t);
+			}
+			requestAnimationFrame(loop);
+		};
+		requestAnimationFrame(loop);
+	}
+
+	document.querySelectorAll<HTMLElement>('.team-network').forEach(init);
+</script>

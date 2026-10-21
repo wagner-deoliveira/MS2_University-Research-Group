@@ -1,0 +1,70 @@
+---
+import Eyebrow from '@/components/Eyebrow.astro';
+import ParticleField from '@/components/ParticleField.astro';
+import LabIllustration from '@/components/LabIllustration.astro';
+import TeamNetwork, { type TeamNode } from '@/components/TeamNetwork.astro';
+import PressWire, { type PressItem } from '@/components/PressWire.astro';
+
+interface Props {
+	eyebrow: string;
+	title: string;
+	highlight?: string;
+	subtitle?: string;
+	image?: string;
+	/** Replace the banner image with the particle animation; the value sets the field angle in degrees. */
+	animation?: number;
+	animationLabel?: string;
+	/** Replace the banner image with the animated lab line illustration. */
+	illustration?: boolean;
+	/** Replace the banner image with the animated orbiting team network. */
+	team?: TeamNode[];
+	/** Replace the banner image with the animated newsroom wire of press coverage. */
+	press?: PressItem[];
+	stats?: { value: string; label: string }[];
+}
+
+const { eyebrow, title, highlight, subtitle, image, animation, animationLabel, illustration, team, press, stats } = Astro.props;
+const src = image?.split('/').map((p, i, a) => (i === a.length - 1 ? encodeURIComponent(p) : p)).join('/');
+---
+
+<section class="relative overflow-hidden bg-background">
+	<div class="grid border-b border-border lg:min-h-[78vh] lg:grid-cols-2">
+		{team && team.length > 0 ? (
+			<TeamNetwork members={team} class="h-[46vh] min-h-[320px] lg:h-auto" />
+		) : press && press.length > 0 ? (
+			<PressWire items={press} class="h-[46vh] min-h-[320px] lg:h-auto" />
+		) : illustration ? (
+			<LabIllustration class="h-[46vh] min-h-[320px] lg:h-auto" />
+		) : animation !== undefined ? (
+			<ParticleField angle={animation} label={animationLabel} class="h-[46vh] min-h-[320px] lg:h-auto" />
+		) : src && (
+			<div class="relative h-[46vh] min-h-[320px] overflow-hidden lg:h-auto">
+				<img src={src} alt="" class="slow-zoom absolute inset-0 h-full w-full object-cover" />
+			</div>
+		)}
+		<div class="relative flex items-center border-t border-border px-6 py-16 md:px-12 lg:border-l lg:border-t-0 lg:px-16 lg:py-24">
+			<span class="absolute -left-[5px] top-14 hidden h-2.5 w-2.5 rounded-full bg-mint-400 lg:block"></span>
+			<div class="max-w-xl">
+				<Eyebrow class="text-muted-foreground">{eyebrow}</Eyebrow>
+				<h1 class="mt-8 text-5xl font-medium leading-[0.98] md:text-7xl">
+					{title}{highlight && <> <span class="text-brand-600 dark:text-mint-400">{highlight}</span></>}
+				</h1>
+				{subtitle && <p class="mt-8 max-w-md text-lg leading-relaxed text-muted-foreground">{subtitle}</p>}
+				<slot />
+			</div>
+		</div>
+	</div>
+
+	{stats && stats.length > 0 && (
+		<div class="container mx-auto px-4">
+			<dl class={`grid grid-cols-2 border-b border-border ${stats.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-4'}`}>
+				{stats.map((s) => (
+					<div class="border-border px-2 py-10 md:border-r md:px-8 md:last:border-r-0">
+						<dt class="eyebrow text-muted-foreground">{s.label}</dt>
+						<dd class="mt-3 font-display text-5xl font-medium tracking-tight md:text-6xl">{s.value}</dd>
+					</div>
+				))}
+			</dl>
+		</div>
+	)}
+</section>

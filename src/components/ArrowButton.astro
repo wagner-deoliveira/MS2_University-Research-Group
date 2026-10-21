@@ -1,0 +1,36 @@
+---
+interface Props {
+	href: string;
+	variant?: 'dark' | 'light' | 'outline' | 'outline-light';
+	external?: boolean;
+	class?: string;
+}
+
+const { href, variant = 'dark', external = false, class: className = '' } = Astro.props;
+
+const styles = {
+	dark: 'bg-ink-950 text-white hover:bg-brand-700 dark:bg-mint-200 dark:text-ink-950 dark:hover:bg-mint-400',
+	light: 'bg-white text-ink-950 hover:bg-mint-200',
+	outline: 'border border-ink-950/20 text-foreground hover:bg-ink-950/5 dark:border-white/20 dark:hover:bg-white/10',
+	'outline-light': 'border border-white/30 text-white hover:bg-white/10',
+}[variant];
+
+const circle = {
+	dark: 'bg-coral-400 text-ink-950 group-hover:bg-mint-400',
+	light: 'bg-brand-600 text-white group-hover:bg-coral-400',
+	outline: 'bg-brand-600 text-white group-hover:bg-coral-400',
+	'outline-light': 'bg-mint-400 text-ink-950 group-hover:bg-coral-400',
+}[variant];
+---
+
+<a
+	href={href}
+	target={external ? '_blank' : undefined}
+	rel={external ? 'noopener noreferrer' : undefined}
+	class={`group inline-flex items-center gap-4 rounded-full py-2 pl-6 pr-2 text-sm font-semibold transition-colors duration-300 ${styles} ${className}`}
+>
+	<span><slot /></span>
+	<span class={`flex h-9 w-9 items-center justify-center rounded-full transition-all duration-300 group-hover:rotate-[-45deg] ${circle}`}>
+		<svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+	</span>
+</a>

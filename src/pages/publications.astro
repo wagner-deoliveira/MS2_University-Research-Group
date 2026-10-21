@@ -1,0 +1,125 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { publicationYears } from '@/data/publications';
+import PageHero from '@/components/PageHero.astro';
+import { Image } from 'astro:assets';
+import acsnanoCover from '@/assets/images/publications/acsnano_cover.webp';
+import jorCoverTerkel from '@/assets/images/publications/jor_cover_terkel.webp';
+import softMatterCover from '@/assets/images/publications/back_cover_morillas.webp';
+import jorCoverMorillas from '@/assets/images/publications/jor_cover_morillas.webp';
+import bookCoverDevicente from '@/assets/images/publications/book_cover_devicente.webp';
+
+const covers = [
+  {
+    link: "https://doi.org/10.1021/acsnano.5c09450",
+    image: acsnanoCover,
+    alt: "ACS Nano Cover",
+    width: 480,
+    height: 638
+  },
+  {
+    link: "https://doi.org/10.1122/8.0000646",
+    image: jorCoverTerkel,
+    alt: "Journal of Rheology Cover",
+    width: 480,
+    height: 635
+  },
+  {
+    link: "https://doi.org/10.1039/D0SM01082K",
+    image: softMatterCover,
+    alt: "Soft Matter Cover",
+    width: 480,
+    height: 629
+  },
+  {
+    link: "https://doi.org/10.1122/1.5093628",
+    image: jorCoverMorillas,
+    alt: "Journal of Rheology Cover",
+    width: 480,
+    height: 640
+  },
+  {
+    link: "https://doi.org/10.1039/9781839169755",
+    image: bookCoverDevicente,
+    alt: "Book Cover",
+    width: 480,
+    height: 635
+  }
+];
+
+const coverSizes = "(min-width: 1024px) 240px, (min-width: 768px) 30vw, 45vw";
+---
+
+<Layout title="Publications - Magnetic Soft Matter Group">
+  <Header />
+  <main class="bg-background text-foreground">
+    <PageHero
+      eyebrow="Scientific output"
+      title="Our"
+      highlight="Publications"
+      subtitle="We publish regularly in a variety of journals in a number of fields."
+      illustration
+    >
+    </PageHero>
+
+    <section class="container mx-auto px-4 py-24">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-600 dark:text-brand-400">Highlights</p>
+        <h2 class="mt-3 text-3xl font-bold tracking-tight md:text-5xl">Featured covers</h2>
+      </div>
+      <div class="mt-14 grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-5">
+        {covers.map(cover => (
+          <a href={cover.link} target="_blank" rel="noopener" class="group block overflow-hidden rounded-2xl border bg-card p-2 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+            <Image
+              src={cover.image}
+              alt={cover.alt}
+              width={cover.width}
+              height={cover.height}
+              widths={[240, 360, 480]}
+              sizes={coverSizes}
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded-xl object-contain"
+            />
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="bg-muted/50 py-24">
+      <div class="container mx-auto grid gap-12 px-4 lg:grid-cols-12">
+        <aside class="hidden lg:col-span-2 lg:block">
+          <nav class="sticky top-24 space-y-1 text-sm">
+            <p class="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Jump to year</p>
+            {publicationYears.map(group => (
+              <a href={`#y-${group.year}`} class="block rounded-lg px-3 py-1.5 text-muted-foreground transition hover:bg-card hover:text-foreground">{group.year}</a>
+            ))}
+          </nav>
+        </aside>
+        <div class="space-y-16 lg:col-span-10">
+          {publicationYears.map(group => (
+            <div id={`y-${group.year}`} class="scroll-mt-24">
+              <div class="flex items-baseline gap-4">
+                <h2 class="bg-gradient-to-r from-brand-600 to-mint-500 bg-clip-text text-4xl font-bold tracking-tight text-transparent">{group.year}</h2>
+                <span class="text-sm text-muted-foreground">{group.items.length} publications</span>
+              </div>
+              <ul class="mt-6 space-y-3">
+                {group.items.map(item => (
+                  <li class="flex items-start justify-between gap-4 rounded-2xl border bg-card p-5 shadow-sm transition hover:border-brand-300 hover:shadow-md">
+                    <p class="text-sm leading-relaxed text-muted-foreground">{item.text}</p>
+                    {item.link && (
+                      <a href={item.link} target="_blank" rel="noopener" class="shrink-0 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-600 hover:bg-brand-100 dark:bg-brand-950 dark:text-brand-300">Read →</a>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>

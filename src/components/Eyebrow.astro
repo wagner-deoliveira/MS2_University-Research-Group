@@ -1,0 +1,14 @@
+---
+interface Props {
+	tone?: 'brand' | 'coral' | 'mint';
+	class?: string;
+}
+
+const { tone = 'brand', class: className = '' } = Astro.props;
+const dot = { brand: 'bg-brand-600 dark:bg-mint-400', coral: 'bg-coral-400', mint: 'bg-mint-400' }[tone];
+---
+
+<p class={`eyebrow flex items-center gap-4 ${className}`}>
+	<span class={`h-2 w-2 shrink-0 rounded-full ${dot}`}></span>
+	<slot />
+</p>
